@@ -40,19 +40,25 @@
     <!-- Stap 3: Succesvol afgerond -->
     <div v-if="step === 3">
       <p class="final-message fade-in-apple slide-up"><strong>Gefeliciteerd agent Fromage! Je missie is geslaagd!</strong></p>
-      <button class="glow-button" @click="resetGame">Opnieuw spelen</button>
     </div>
   </div>
 </template>
 
 <script>
+import { useGameStore } from "@/stores/gameStore";
+import { useRouter } from "vue-router";
+import { db } from "@/firebase";
+import { updateDoc, query, where, getDocs, collection, doc } from "firebase/firestore";
+
 export default {
-  name: 'AgentFromage',
+  name: "AgentFromage",
   data() {
     return {
       step: 0,
       code: "",
       message: "",
+      gameStore: useGameStore(), // 🔹 Pinia store
+      router: useRouter(), // 🔹 Vue Router
     };
   },
   methods: {
@@ -62,19 +68,43 @@ export default {
     validateCode() {
       this.code = this.code.replace(/[^0-9]/g, ""); // Alleen cijfers
     },
-    submitCode() {
-      if (this.code.trim() === "1234") {
-        this.message = "✅ Code correct!";
-        setTimeout(() => this.step = 3, 1000);
-      } else {
-        this.message = "❌ Foute code, probeer opnieuw.";
+    async submitCode() {
+    if (this.code.trim() === "1234") {
+      this.message = "✅ Code correct!";
+
+      // 🔹 Roep de completeGame functie aan om de voortgang bij te werken
+      this.gameStore.completeGame("game2completed");
+
+      // 🔹 Zoek Firestore document op basis van playerName
+      try {
+        const gameInstanceRef = collection(db, "gameinstances");
+        const q = query(gameInstanceRef, where("name", "==", this.gameStore.playerName));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          // Haal het eerste document op (aangezien je verwacht dat er maar één match is)
+          const playerDoc = querySnapshot.docs[0];
+          await updateDoc(playerDoc.ref, { game2completed: true });
+          console.log("Game 2 voortgang opgeslagen in Firestore! ✅");
+
+          // 🔹 Zet het spel weer op 'beschikbaar' in de games-collectie
+          const gameRef = doc(db, "games", "game2");
+          await updateDoc(gameRef, { available: true });
+          console.log("Game 2 opnieuw beschikbaar gemaakt in Firestore! 🔓");
+        } else {
+          console.error("Speler niet gevonden in Firestore!");
+        }
+      } catch (error) {
+        console.error("Fout bij updaten van Firestore:", error);
       }
-    },
-    resetGame() {
-      this.step = 0;
-      this.code = "";
-      this.message = "";
+
+      setTimeout(() => {
+        this.router.push("/snowowl"); // 🔹 Stuur speler naar /snowowl
+      }, 1000);
+    } else {
+      this.message = "❌ Foute code, probeer opnieuw.";
     }
+  }
   },
 };
 </script>
