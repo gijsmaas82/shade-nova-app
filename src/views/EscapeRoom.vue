@@ -14,6 +14,11 @@
   </template>
   
   <script>
+  import { useGameStore } from "@/stores/gameStore";
+  import { useRouter } from "vue-router";
+  import { db } from "@/firebase";
+  import { updateDoc, query, where, getDocs, collection, doc } from "firebase/firestore";
+
   export default {
     data() {
       return {
@@ -22,10 +27,41 @@
         errorMessage: ""
       };
     },
+    setup() {
+      return {
+        gameStore: useGameStore(),
+        router: useRouter(),
+      };
+    },
     methods: {
-      checkCode() {
-        if (this.enteredCode === this.correctCode) {
-          this.$router.push("/"); // Vervang met de juiste route
+      async checkCode() {
+        if (this.enteredCode.toUpperCase() === this.correctCode) {
+          // 🔹 Update voortgang in Pinia store en Firestore
+          this.gameStore.completeGame("game5completed");
+
+          try {
+            const gameInstanceRef = collection(db, "gameinstances");
+            const q = query(gameInstanceRef, where("name", "==", this.gameStore.playerName));
+            const querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+              const playerDoc = querySnapshot.docs[0];
+              await updateDoc(playerDoc.ref, { game5completed: true });
+
+              // 🔹 Zet het spel opnieuw beschikbaar
+              const gameRef = doc(db, "games", "game5");
+              await updateDoc(gameRef, { available: true });
+            } else {
+              console.error("Speler niet gevonden in Firestore!");
+            }
+          } catch (error) {
+            console.error("Fout bij updaten van Firestore:", error);
+          }
+
+          // 🔹 Stuur speler na 2 seconden naar /snowowl
+          setTimeout(() => {
+            this.router.push("/snowowl");
+          }, 2000);
         } else {
           this.errorMessage = "Verkeerde code... het mysterie blijft onopgelost.";
         }
