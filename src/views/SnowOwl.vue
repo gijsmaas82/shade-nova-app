@@ -217,6 +217,8 @@ button:hover {
 .game-board {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 10px;
   margin-top: 20px;
 }
