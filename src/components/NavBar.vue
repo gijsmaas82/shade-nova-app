@@ -57,7 +57,7 @@
     font-size: 1.2rem;
     font-weight: bold;
     color: white;
-    background: rgba(0, 0, 0, 0.2); /* Transparant zwart */
+    background: rgba(0, 0, 0, 0.8); /* Transparant zwart */
     backdrop-filter: blur(5px); /* Luxe blurry effect */
     z-index: 1000;
   }

@@ -5,7 +5,7 @@
       <h2>{{ popups[popupIndex].title }}</h2>
       <img :src="popups[popupIndex].img" alt="Popup image" />
       <p>{{ popups[popupIndex].text }}</p>
-      <button @click="nextPopup">Volgende</button>
+      <button v-if="popupIndex !== popups.length - 1" @click="nextPopup">Volgende</button>
       <input v-if="popups[popupIndex].input" v-model="playerName" 
               placeholder="Jouw naam" />
       <button v-if="popupIndex === popups.length - 1" @click="startGame">Start Spel</button>
@@ -14,12 +14,15 @@
     <!-- Als er een speler is, toon de beschikbare spellen -->
     <div v-if="gameStore.playerName" class="game-board">
       <h1>Selecteer een spel</h1>
+      <p>Klik hieronder op een beschikbare tegel. Je krijgt dan instructies over waar je de game kan spelen. Wanneer een spel bezet is of als je het spel al hebt gedaan wordt de tegel uitgezet.</p>
       <div 
         v-for="(tile, index) in tiles" 
         :key="index" 
         :class="['tile', { 'disabled': !tile.available }]" 
         @click="selectGame(index)">
-        {{ tile.name }}
+        <h2>{{ tile.title }}</h2>
+        <p>Skill: {{  tile.skill }}</p>
+        <img :src="tile.img" alt="Popup image" />
       </div>
 
       <!-- 🔹 Developer Reset Button -->
@@ -47,18 +50,20 @@ export default {
 
     // Pop-up configuraties
     const popups = ref([
-      { title: "Welkom!", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Dit is het begin van je avontuur!" },
-      { title: "Hoe werkt het?", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Je speelt vijf spellen en verzamelt codes." },
-      { title: "Jouw naam", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Vul je naam in om te beginnen!", input: true }
+      { title: "Welkom!", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Wanneer je dit leest betekent het dat je bent uitgenodigd voor de ultieme test! Doorsta jij de nacht van de sneeuwuil?" },
+      { title: "Wat is S.H.A.D.E!", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "S.H.A.D.E is een geheim genootschap en is op zoek naar nieuwe leden. Agenten van S.H.A.D.E werken in het geheim aan het omverwerpen van de huidige wereldorde. Wij zijn een groep van ethische hackers." },
+      { title: "De nacht van de sneeuwuil.", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Om toegelaten te worden tot S.H.A.D.E. hebben we een initiatietest gemaakt. Do you have what it takes to become a S.H.A.D.E. agent?" },
+      { title: "Hoe werkt het?", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Zo meteen krijg je instructies om op verschillende plekken op het leerplein games te spelen. Elke game staat in het teken van een skill die je moet tonen om toegelaten te worden. Je speelt vijf spellen en verzamelt codes. De codes voer je in in deze website. Heb je alle codes dan mag jij de kluis openen en jezelf een S.H.A.D.E. agent noemen." },
+      { title: "Jouw naam", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Vul eerst je naam in! Daarna kan je op de startknop drukken en dan begint jouw nacht van de sneeuwuil!", input: true }
     ]);
 
     // Spellen beschikbaarheid
     const tiles = ref([
-      { name: "Spel 1", available: true },
-      { name: "Spel 2", available: true },
-      { name: "Spel 3", available: true },
-      { name: "Spel 4", available: true },
-      { name: "Spel 5", available: true }
+      { id: 1, name: "Spel 1", img: new URL('@/assets/dimensions-collapsing.png', import.meta.url).href, title: "Dimensions collapsing", skill: "Ruimtelijk inzicht", available: true },
+      { id: 2, name: "Spel 2", img: new URL('@/assets/agent-fromage.png', import.meta.url).href, title: "Agent Fromage", skill: "Vingervlugheid", available: true },
+      { id: 3, name: "Spel 3", img: new URL('@/assets/laser-lockdown.png', import.meta.url).href, title: "Laser Lockdown", skill: "Precisie", available: true },
+      { id: 4, name: "Spel 4", img: new URL('@/assets/feel-it.png', import.meta.url).href, title: "Feel IT", skill: "Presteren onder druk", available: true },
+      { id: 5, name: "Spel 5", img: new URL('@/assets/dead-body.png', import.meta.url).href, title: "Murder mystery", skill: "Deductie", available: true }
     ]);
 
     // Ga naar de volgende popup
@@ -178,36 +183,54 @@ export default {
 
 <style scoped>
 .container {
+  margin-top: 5vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100vh;
+  justify-content: flex-start; /* Zorgt ervoor dat de inhoud niet geforceerd in het midden blijft */
   background: #111;
   color: #fff;
   font-family: "Orbitron", sans-serif;
+  overflow: auto; /* Maakt scrollen mogelijk als de inhoud te groot is */
+  padding-bottom: 50px; /* Extra ruimte onderaan voor betere scrollervaring */
 }
 
 .popup {
+  /* font-family: 'Creepster', cursive; */
+  margin-top: 5vh;
   background: rgba(0, 0, 0, 0.8);
   padding: 20px;
   border-radius: 10px;
   text-align: center;
   box-shadow: 0 0 10px #fff;
+  max-width: 80vw;
 }
-
+.popup h2 {
+  font-family: 'Sixtyfour Convergence', sans-serif;
+}
+.popup p {
+  font-family: 'Creepster', cursive;
+  font-size: 1.5rem;
+}
 .popup img {
   width: 200px;
   margin: 10px 0;
 }
 
 button {
+  font-family: 'Sixtyfour Convergence', sans-serif;
+  margin-top: 20px;
   padding: 10px 20px;
-  font-size: 1rem;
-  background: #333;
+  font-size: 1.5rem;
+  font-weight: bold;
   color: #fff;
+  background: linear-gradient(135deg, #444, #111);
   border: none;
+  border-radius: 5px;
   cursor: pointer;
+  transition: background 0.3s ease-in-out;
+  margin: 10px;
 }
 
 button:hover {
@@ -223,8 +246,15 @@ button:hover {
   margin-top: 20px;
 }
 
+.game-board h1 {
+  font-family: 'Sixtyfour Convergence', sans-serif;
+}
+.game-board p {
+  font-family: 'Creepster', cursive;
+  margin: 10px; 
+}
 .tile {
-  width: 200px;
+  width: 70vw;
   padding: 15px;
   text-align: center;
   background: linear-gradient(135deg, #666, #222);
@@ -234,6 +264,23 @@ button:hover {
   transition: 0.3s;
 }
 
+.tile h2 {
+  font-family: 'Creepster', cursive;
+  /* margin-top: 20px; */
+  padding: 10px 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.tile p {
+  font-family: 'Creepster', cursive;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.tile img {
+  width: 200px;
+  margin: 10px 0;
+}
 .tile:hover {
   background: linear-gradient(135deg, #888, #444);
 }
