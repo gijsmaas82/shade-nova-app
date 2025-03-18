@@ -75,7 +75,21 @@ export const useGameStore = defineStore("gameStore", {
           }
         }
       },
-  
+      clearPlayer() {
+        // Verwijder de speler uit de localStorage
+        localStorage.removeItem("playerName");
+        localStorage.removeItem("gameProgress");
+
+        // Reset de state van de store
+        this.playerName = "";
+        this.gameProgress = {
+          game1completed: false,
+          game2completed: false,
+          game3completed: false,
+          game4completed: false,
+          game5completed: false,
+        };
+      },
       async completeGame(gameKey) {
         this.gameProgress[gameKey] = true;
         localStorage.setItem("gameProgress", JSON.stringify(this.gameProgress));

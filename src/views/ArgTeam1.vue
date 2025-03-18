@@ -9,6 +9,10 @@
         <p>Loop naar kamer 2.10 om te beginnen met het spel</p>
         <p class="instruction-detail">Zoek de verschillen tussen het spel en de echte wereld. Vind alle verborgen letters!</p>
       </div>
+      <div class="game-images">
+        <img :src="gameimages[0]" class="gameimage" />
+        <img :src="gameimages[1]" class="gameimage" />
+      </div>
     </div>
 
     <div class="letter-progress">
@@ -87,6 +91,7 @@ export default {
       confetti: null,
       gameStore: useGameStore(), // 🔹 Pinia store
       router: useRouter(), // 🔹 Vue Router
+      gameimages: [new URL('@/assets/game1/digitaltwin1.png', import.meta.url).href, new URL('@/assets/game1/digitaltwin2.png', import.meta.url).href]
     };
   },
   computed: {
@@ -291,6 +296,7 @@ export default {
 
 <style scoped>
 .game-container {
+  margin-top: 5vh;
   font-family: 'Montserrat', sans-serif;
   background-color: #000000;
   min-height: 100vh;
@@ -348,7 +354,15 @@ export default {
   position: relative;
   z-index: 1;
 }
-
+.gameimages {
+  display: flex;
+  flex-direction: column;
+}
+.gameimage {
+  max-width: 80%;
+  border:#000000;
+  border-radius: 10px;
+}
 .title {
   font-size: 3rem;
   color: #ffffff;

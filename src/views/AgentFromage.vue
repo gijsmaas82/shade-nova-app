@@ -40,6 +40,11 @@
         </div>
         <button class="glow-button" @click="submitCode">Verzenden</button>
         <p v-if="message" class="message">{{ message }}</p>
+        <div class="game-images">
+          <img :src="gameimages[0]" class="gameimage" />
+          <img :src="gameimages[1]" class="gameimage" />
+          <img :src="gameimages[2]" class="gameimage" />
+        </div>
       </div>
     </transition>
 
@@ -68,6 +73,7 @@ export default {
       message: "",
       gameStore: useGameStore(), // 🔹 Pinia store
       router: useRouter(), // 🔹 Vue Router
+      gameimages: [new URL('@/assets/game2/agentfromage1.png', import.meta.url).href, new URL('@/assets/game2/agentfromage2.png', import.meta.url).href, new URL('@/assets/game2/agentfromage3.png', import.meta.url).href]
     };
   },
   methods: {
@@ -120,11 +126,12 @@ export default {
 
 <style scoped>
 .container {
+  margin-top: 5vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   text-align: center;
   padding: 50px;
   background: linear-gradient(to bottom, #111, #222);
@@ -142,6 +149,17 @@ export default {
 .subtitle {
   font-size: 1.2rem;
   margin-bottom: 20px;
+}
+
+.gameimages {
+  display: flex;
+  flex-direction: column;
+}
+.gameimage {
+  max-width: 80%;
+  border:#000000;
+  border-radius: 10px;
+  margin: 10px;
 }
 
 .glow-button {

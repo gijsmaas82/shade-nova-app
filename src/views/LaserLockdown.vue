@@ -39,6 +39,12 @@
         </div>
       </div>
     </div>
+    <div class="game-images">
+      <img :src="gameimages[0]" class="gameimage" />
+      <img :src="gameimages[1]" class="gameimage" />
+      <img :src="gameimages[2]" class="gameimage" />
+      <img :src="gameimages[3]" class="gameimage" />
+    </div>
   </div>
 </template>
 
@@ -58,6 +64,7 @@ export default {
       correctCode: "1234",
       codeCorrect: false, // ✅ Nieuwe statusvariabele
       errorMessage: "", // ❌ Voor foutmelding
+      gameimages: [new URL('@/assets/game3/laser1.png', import.meta.url).href, new URL('@/assets/game3/laser2.png', import.meta.url).href, new URL('@/assets/game3/laser3.png', import.meta.url).href, new URL('@/assets/game3/laser4.png', import.meta.url).href],
       steps: [
         "Welkom bij Laser Lockdown! 🚀 Verbind lasers met spiegels om de deur te openen en te ontsnappen!",
         "Gebruik de spiegels om de laserstraal in de juiste richting te sturen.",
@@ -124,6 +131,7 @@ export default {
 
 <style scoped>
 .container {
+  margin-top: 5vh;
   font-family: 'Sixtyfour Convergence', sans-serif;
   background-color: #0f0b45;
   text-align: center;
@@ -262,5 +270,16 @@ input:focus {
     opacity: 1;
     transform: scale(1);
   }
+}
+
+.gameimages {
+  display: flex;
+  flex-direction: column;
+}
+.gameimage {
+  max-width: 80%;
+  border:#000000;
+  border-radius: 10px;
+  margin: 10px;
 }
 </style>

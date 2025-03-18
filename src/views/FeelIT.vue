@@ -11,6 +11,10 @@
       
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </div>
+    <div class="game-images">
+      <img :src="gameimages[0]" class="gameimage" />
+      <img :src="gameimages[1]" class="gameimage" />
+    </div>
   </div>
 </template>
 
@@ -25,7 +29,8 @@ export default {
     return {
       correctCode: "BOM", // Pas deze code aan naar de juiste waarde
       enteredCode: "",
-      errorMessage: ""
+      errorMessage: "",
+      gameimages: [new URL('@/assets/game4/bom.png', import.meta.url).href, new URL('@/assets/game4/bom2.png', import.meta.url).href]
     };
   },
   setup() {
@@ -74,10 +79,12 @@ export default {
 <style scoped>
 .game-container {
   /* background: url('@/assets/background.jpg') no-repeat center center fixed; */
+  margin-top:5vh;
   background: #111;
   background-size: cover;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
@@ -127,5 +134,15 @@ button:hover {
   color: yellow;
   margin-top: 10px;
   font-weight: bold;
+}
+.gameimages {
+  display: flex;
+  flex-direction: column;
+}
+.gameimage {
+  max-width: 80%;
+  border:#000000;
+  border-radius: 10px;
+  margin: 10px;
 }
 </style>

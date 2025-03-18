@@ -5,8 +5,11 @@
       <h2>{{ popups[popupIndex].title }}</h2>
       <img :src="popups[popupIndex].img" alt="Popup image" />
       <p>{{ popups[popupIndex].text }}</p>
-      <button v-if="popupIndex !== popups.length - 1" @click="nextPopup">Volgende</button>
-      <input v-if="popups[popupIndex].input" v-model="playerName" 
+      <div class="navbuttons">
+        <button v-if="popupIndex !== 0" @click="nextPopup">Vorige</button>
+        <button v-if="popupIndex !== popups.length - 1" @click="nextPopup">Volgende</button>
+      </div>
+      <input v-if="popups[popupIndex].input" v-model="playerName" class="word-input"
               placeholder="Jouw naam" />
       <button v-if="popupIndex === popups.length - 1" @click="startGame">Start Spel</button>
     </div>
@@ -14,7 +17,7 @@
     <!-- Als er een speler is, toon de beschikbare spellen -->
     <div v-if="gameStore.playerName" class="game-board">
       <h1>Selecteer een spel</h1>
-      <p>Klik hieronder op een beschikbare tegel. Je krijgt dan instructies over waar je de game kan spelen. Wanneer een spel bezet is of als je het spel al hebt gedaan wordt de tegel uitgezet.</p>
+      <p>Klik hieronder op een beschikbare tegel. Je krijgt dan instructies over waar je de game kan spelen. Wanneer een spel bezet is of als je het spel al hebt gedaan wordt de tegel uitgezet. Lukt het jou om de kluis te openen?</p>
       <div 
         v-for="(tile, index) in tiles" 
         :key="index" 
@@ -23,6 +26,14 @@
         <h2>{{ tile.title }}</h2>
         <p>Skill: {{  tile.skill }}</p>
         <img :src="tile.img" alt="Popup image" />
+      </div>
+
+      <div v-if="allGamesCompleted" class="popup completed-popup">
+        <h2>Gefeliciteerd, Agent!</h2>
+        <img src="@/assets/sneeuwuil.png" alt="Gefeliciteerd" />
+        <p>Je hebt alle spellen voltooid en bent nu officieel een S.H.A.D.E. agent!</p>
+        <p>De code om de kluis te openen is: 404</p>
+        <button @click="gameStore.clearPlayer()">Opnieuw spelen</button>
       </div>
 
       <!-- 🔹 Developer Reset Button -->
@@ -34,7 +45,7 @@
 </template>
 
 <script>
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { db } from "../firebase";
 import { collection, getDoc, doc, updateDoc, addDoc, serverTimestamp } from "firebase/firestore";
 import { useRouter } from 'vue-router';
@@ -51,8 +62,8 @@ export default {
     // Pop-up configuraties
     const popups = ref([
       { title: "Welkom!", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Wanneer je dit leest betekent het dat je bent uitgenodigd voor de ultieme test! Doorsta jij de nacht van de sneeuwuil?" },
-      { title: "Wat is S.H.A.D.E!", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "S.H.A.D.E is een geheim genootschap en is op zoek naar nieuwe leden. Agenten van S.H.A.D.E werken in het geheim aan het omverwerpen van de huidige wereldorde. Wij zijn een groep van ethische hackers." },
-      { title: "De nacht van de sneeuwuil.", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Om toegelaten te worden tot S.H.A.D.E. hebben we een initiatietest gemaakt. Do you have what it takes to become a S.H.A.D.E. agent?" },
+      { title: "Wat is S.H.A.D.E!", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "S.H.A.D.E is een geheim genootschap en is op zoek naar nieuwe leden. Agenten van S.H.A.D.E werken in het geheim aan de digitale bescherming van onze democratische instituties. Wij zijn een groep van ethische hackers." },
+      { title: "De nacht van de sneeuwuil.", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Om toegelaten te worden tot S.H.A.D.E. moet je een initiatietest doen. De nacht van de sneeuwuil! Do you have what it takes to become a S.H.A.D.E. agent?" },
       { title: "Hoe werkt het?", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Zo meteen krijg je instructies om op verschillende plekken op het leerplein games te spelen. Elke game staat in het teken van een skill die je moet tonen om toegelaten te worden. Je speelt vijf spellen en verzamelt codes. De codes voer je in in deze website. Heb je alle codes dan mag jij de kluis openen en jezelf een S.H.A.D.E. agent noemen." },
       { title: "Jouw naam", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Vul eerst je naam in! Daarna kan je op de startknop drukken en dan begint jouw nacht van de sneeuwuil!", input: true }
     ]);
@@ -164,6 +175,16 @@ export default {
         console.error("Fout bij het resetten van de spellen:", error);
       }
     };
+    const allGamesCompleted = computed(() => {
+      const progress = gameStore.gameProgress || {};
+      return [
+        progress.game1completed,
+        progress.game2completed,
+        progress.game3completed,
+        progress.game4completed,
+        progress.game5completed
+      ].every(Boolean);
+    });
     let statusInterval;
     onMounted(() => {
       
@@ -176,7 +197,7 @@ export default {
       clearInterval(statusInterval);
     });
 
-    return { showPopup, popupIndex, popups, nextPopup, tiles, selectGame, resetGames, startGame, gameStore, playerName };
+    return { showPopup, popupIndex, popups, nextPopup, tiles, selectGame, resetGames, startGame, gameStore, playerName, allGamesCompleted };
   }
 };
 </script>
@@ -205,6 +226,10 @@ export default {
   text-align: center;
   box-shadow: 0 0 10px #fff;
   max-width: 80vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .popup h2 {
   font-family: 'Sixtyfour Convergence', sans-serif;
@@ -216,6 +241,35 @@ export default {
 .popup img {
   width: 200px;
   margin: 10px 0;
+}
+.completed-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 15px #fff;
+}
+
+.completed-popup img {
+  width: 200px;
+}
+.word-input {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  border: 3px solid rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  background-color: rgba(26, 26, 26, 0.6);
+  color: #ecf0f1;
+  max-width: 90%;
 }
 
 button {

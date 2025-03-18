@@ -196,6 +196,10 @@ export default {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 .button-img {
   margin: 10px;
