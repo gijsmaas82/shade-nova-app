@@ -39,12 +39,12 @@
         </div>
       </div>
     </div>
-    <div class="game-images">
+    <!-- <div class="game-images">
       <img :src="gameimages[0]" class="gameimage" />
       <img :src="gameimages[1]" class="gameimage" />
       <img :src="gameimages[2]" class="gameimage" />
       <img :src="gameimages[3]" class="gameimage" />
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -66,7 +66,8 @@ export default {
       errorMessage: "", // ❌ Voor foutmelding
       gameimages: [new URL('@/assets/game3/laser1.png', import.meta.url).href, new URL('@/assets/game3/laser2.png', import.meta.url).href, new URL('@/assets/game3/laser3.png', import.meta.url).href, new URL('@/assets/game3/laser4.png', import.meta.url).href],
       steps: [
-        "Welkom bij Laser Lockdown! 🚀 Verbind lasers met spiegels om de deur te openen en te ontsnappen!",
+        "Welkom bij Laser Lockdown! 🚀 Ga naar lokaal 2.07 om de game te spelen",
+        "In het spel verbind lasers met spiegels om de deur te openen en te ontsnappen!",
         "Gebruik de spiegels om de laserstraal in de juiste richting te sturen.",
         "Sommige levels hebben obstakels die je moet omzeilen. Denk strategisch na!",
         "Als de laser de juiste plek bereikt, wordt de deur ontgrendeld en kun je ontsnappen!",

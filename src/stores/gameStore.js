@@ -1,10 +1,11 @@
 import { defineStore } from "pinia";
 import { db } from "../firebase"; // Zorg ervoor dat je Firestore hebt ingesteld
-import { doc, updateDoc, getDoc, collection, query, getDocs, where  } from "firebase/firestore";
+import { updateDoc, collection, query, getDocs, where  } from "firebase/firestore";
 
 export const useGameStore = defineStore("gameStore", {
     state: () => ({
       playerName: "",
+      vaultCode: "",
       gameProgress: {
         game1completed: false,
         game2completed: false,
@@ -49,29 +50,42 @@ export const useGameStore = defineStore("gameStore", {
       },
       async loadProgress() {
         const savedProgress = JSON.parse(localStorage.getItem("gameProgress"));
+        const savedCode = localStorage.getItem("vaultCode");
+
         if (savedProgress) {
           this.gameProgress = savedProgress;
         }
-  
+
+        if (savedCode) {
+          this.vaultCode = savedCode;
+        }
+
         if (this.playerName) {
-          const playerDoc = doc(db, "gameinstances", this.playerName);
-          const docSnap = await getDoc(playerDoc);
-          if (docSnap.exists()) {
-            this.gameProgress = {
-              game1completed: docSnap.data().game1completed,
-              game2completed: docSnap.data().game2completed,
-              game3completed: docSnap.data().game3completed,
-              game4completed: docSnap.data().game4completed,
-              game5completed: docSnap.data().game5completed,
-            };
-  
-            // Sync naar localStorage
-            localStorage.setItem("gameProgress", JSON.stringify(this.gameProgress));
-            const storedProgress = localStorage.getItem("gameProgress");
-            if (storedProgress) {
-                this.gameProgress = JSON.parse(storedProgress);
+          try {
+            const gameInstanceRef = collection(db, "gameinstances");
+            const q = query(gameInstanceRef, where("name", "==", this.playerName));
+            const querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+              const docSnap = querySnapshot.docs[0];
+              const data = docSnap.data();
+
+              this.gameProgress = {
+                game1completed: data.game1completed,
+                game2completed: data.game2completed,
+                game3completed: data.game3completed,
+                game4completed: data.game4completed,
+                game5completed: data.game5completed,
+              };
+
+              this.vaultCode = data.vaultCode || "";
+              localStorage.setItem("gameProgress", JSON.stringify(this.gameProgress));
+              localStorage.setItem("vaultCode", this.vaultCode);
+
+              // console.log("Voortgang + vaultCode geladen:", this.gameProgress, this.vaultCode);
             }
-            console.log("Game Progress geladen:", this.gameProgress);
+          } catch (err) {
+            console.error("Fout bij ophalen voortgang/vaultCode:", err);
           }
         }
       },

@@ -2,7 +2,7 @@
   <div class="game-container">
     <div class="game-page">
       <h1>💣 Welkom bij Feel IT! 🎖️</h1>
-      <p>Er staat een bom op ontploffen in lokaal 2.10.</p>
+      <p>Er staat een bom op ontploffen in lokaal 2.08.</p>
       <p>Lukt het jou om op tijd de juiste draden door te knippen!</p>
       <p>Als het gelukt is kan je de geheime code hieronder invoeren. Veel succes!</p>
       
@@ -11,10 +11,10 @@
       
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </div>
-    <div class="game-images">
+    <!-- <div class="game-images">
       <img :src="gameimages[0]" class="gameimage" />
       <img :src="gameimages[1]" class="gameimage" />
-    </div>
+    </div> -->
   </div>
 </template>
 

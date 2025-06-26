@@ -3,17 +3,18 @@
       <div class="game-page">
         <h1>🔪 Welkom bij de EscapeRoom! 🕵️‍♂️</h1>
         <p>De beruchte detectivezaak wacht op jou... Ga naar lokaal J2.06 bij het leerplein om het spel te starten.</p>
-        <p>Los de raadsels op en voer de geheime code in om verder te gaan naar het volgende mysterie.</p>
+        <p>Open de camera app op de windows xp computer en scan de juiste afbeeldingen op de muur. Kijk op het scherm welke letters verschijnen.</p>
+        <p>Verzamel de letters en maak een woord om verder te gaan.</p>
         
         <input v-model="enteredCode" type="text" placeholder="Voer de geheime code in..." />
         <button @click="checkCode">Ontgrendel de waarheid</button>
         
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </div>
-      <div class="game-images">
+      <!-- <div class="game-images">
         <img :src="gameimages[0]" class="gameimage" />
         <img :src="gameimages[1]" class="gameimage" />
-      </div>
+      </div> -->
     </div>
   </template>
   

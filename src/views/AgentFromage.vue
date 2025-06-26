@@ -4,7 +4,7 @@
     <transition name="fade-slide">
       <div v-if="step === 0">
         <h1 class="title">Waar bevindt het spel zich?</h1>
-        <p class="subtitle">Het spel bevindt zich in lokaal 2.10. Hier begint je avontuur!</p>
+        <p class="subtitle">Het spel kan gespeeld worden op het digibord in lokaal 2.10. Hier begint je avontuur!</p>
         <button class="glow-button" @click="nextStep">Verder</button>
       </div>
     </transition>
@@ -40,11 +40,11 @@
         </div>
         <button class="glow-button" @click="submitCode">Verzenden</button>
         <p v-if="message" class="message">{{ message }}</p>
-        <div class="game-images">
+        <!-- <div class="game-images">
           <img :src="gameimages[0]" class="gameimage" />
           <img :src="gameimages[1]" class="gameimage" />
           <img :src="gameimages[2]" class="gameimage" />
-        </div>
+        </div> -->
       </div>
     </transition>
 

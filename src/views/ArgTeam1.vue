@@ -4,15 +4,16 @@
     <div class="twinkling"></div>
     
     <div class="game-header">
-      <h1 class="title">Spot the Difference</h1>
+      <h1 class="title">Dimensions collapsing</h1>
       <div class="instructions">
-        <p>Loop naar kamer 2.10 om te beginnen met het spel</p>
-        <p class="instruction-detail">Zoek de verschillen tussen het spel en de echte wereld. Vind alle verborgen letters!</p>
+        <p>Loop naar het grote digibord op het leerplein om te beginnen met het spel</p>
+        <p>Op het digibord staat een digitale versie van ons leerplein.</p>
+        <p class="instruction-detail">Zoek de verschillen tussen het spel en de echte wereld. Vind de 5 verborgen letters in de echte wereld! De gevonden letters kan je opslaan hieronder. Uiteindelijk moet je een woord maken van de 5 letters.</p>
       </div>
-      <div class="game-images">
+      <!-- <div class="game-images">
         <img :src="gameimages[0]" class="gameimage" />
         <img :src="gameimages[1]" class="gameimage" />
-      </div>
+      </div> -->
     </div>
 
     <div class="letter-progress">
