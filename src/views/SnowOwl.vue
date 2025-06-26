@@ -53,7 +53,10 @@
           <div class="circle" :style="getCircleStyle(3)">{{ visibleVaultCode[0] }}</div>
           <div class="circle" :style="getCircleStyle(4)">{{ visibleVaultCode[1] }}</div>
         </div>
-        <button @click="gameStore.clearPlayer()">Opnieuw spelen</button>
+        <button @click="gameStore.clearPlayer(); showPopup = true; popupIndex = 0; playerName = ''">
+          Opnieuw spelen
+        </button>
+
       </div>
 
       <button 
