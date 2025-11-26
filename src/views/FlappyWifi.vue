@@ -1,31 +1,31 @@
 <template>
-  <div class="mission mission--escape">
+  <div class="mission mission--feelit">
     <section class="mission__hero card surface-frosted">
       <div class="mission__hero-copy">
-        <span class="badge">Missie 5</span>
-        <h1>Murder Mystery</h1>
-        <p>Ga naar lokaal J2.06 en ontrafel het mysterie. Gebruik de oude Windows XP-computer en scan de juiste aanwijzingen om de letters te verzamelen.</p>
+        <span class="badge">Missie 4</span>
+        <h1>Flappy Wifi</h1>
+        <p>Het Wifi netwerk staat op omvallen. Zorg er voor dat de wifi door alle firewalls heen komt!</p>
       </div>
       <div class="mission__hero-visual shadow-ring">
-        <img :src="heroImage" alt="Murder Mystery" />
+        <img :src="heroImage" alt="Feel IT" />
       </div>
     </section>
 
     <section class="mission__panel card">
       <h2 class="section-heading">Missiebriefing</h2>
       <ul class="mission__list">
-        <li><strong>1.</strong> Start de camera-app op de Windows XP-computer.</li>
-        <li><strong>2.</strong> Scan de aanwijzingen op de muur en noteer de letters.</li>
-        <li><strong>3.</strong> Vorm het codewoord en voer het hier in om het dossier te sluiten.</li>
+        <li><strong>1.</strong> Begeef je naar lokaal 2.10 en start de Flappy Wifi game.</li>
+        <li><strong>2.</strong> Zorg dat het wifi-signaal niet tegen de firewalls aanbotst.</li>
+        <li><strong>3.</strong> Lukt het om 50 firewalls te passeren dan krijg je de code. Gebruik de spatiebalk om te vliegen. Succes!!</li>
       </ul>
     </section>
 
     <section class="mission__panel card">
-      <h2 class="section-heading">Ontgrendel de waarheid</h2>
-      <p class="section-subtext">Combineer alle gevonden letters en voer het woord in om de zaak op te lossen.</p>
+      <h2 class="section-heading">Houd de wifi in de lucht!</h2>
+      <p class="section-subtext">Voer de geheime code in die je hebt gevonden om de missie af te sluiten.</p>
       <div class="mission__code-group">
-        <input v-model="enteredCode" type="text" placeholder="Voer de geheime code in" maxlength="5" @keydown.enter="checkCode" />
-        <button class="btn" @click="checkCode">Ontgrendel</button>
+        <input v-model="enteredCode" type="text" placeholder="Voer de geheime code in" maxlength="6" @keydown.enter="checkCode" />
+        <button class="btn" @click="checkCode">Check de code</button>
       </div>
       <p v-if="errorMessage" class="mission__feedback is-error">{{ errorMessage }}</p>
       <p v-else-if="successMessage" class="mission__feedback">{{ successMessage }}</p>
@@ -42,22 +42,22 @@ import { updateDoc, query, where, getDocs, collection, doc } from "firebase/fire
 export default {
   data() {
     return {
-      correctCode: "MOORD",
+      correctCode: "100101",
       enteredCode: "",
       errorMessage: "",
       successMessage: "",
       gameStore: useGameStore(),
       router: useRouter(),
-      heroImage: new URL('@/assets/game5/ar1.png', import.meta.url).href
+      heroImage: new URL('@/assets/game4/flappy.png', import.meta.url).href
     };
   },
   async beforeRouteLeave(_to, _from, next) {
-    if (!this.gameStore.gameProgress.game5completed) {
+    if (!this.gameStore.gameProgress.game4completed) {
       try {
-        const gameRef = doc(db, "games", "game5");
+        const gameRef = doc(db, "games", "game4");
         await updateDoc(gameRef, { available: true, lockedBy: null, lockedAt: null });
       } catch (error) {
-        console.error("Fout bij het vrijgeven van game5:", error);
+        console.error("Fout bij het vrijgeven van game4:", error);
       }
     }
     next();
@@ -66,8 +66,8 @@ export default {
     async checkCode() {
       if (this.enteredCode.toUpperCase() === this.correctCode) {
         this.errorMessage = "";
-        this.successMessage = "Perfect! Het mysterie is opgelost.";
-        this.gameStore.completeGame("game5completed");
+        this.successMessage = "Goed gedaan agent! De wifi is in de lucht gebleven!";
+        this.gameStore.completeGame("game4completed");
 
         try {
           const gameInstanceRef = collection(db, "gameinstances");
@@ -76,9 +76,9 @@ export default {
 
           if (!querySnapshot.empty) {
             const playerDoc = querySnapshot.docs[0];
-            await updateDoc(playerDoc.ref, { game5completed: true });
+            await updateDoc(playerDoc.ref, { game4completed: true });
 
-            const gameRef = doc(db, "games", "game5");
+            const gameRef = doc(db, "games", "game4");
             await updateDoc(gameRef, { available: true, lockedBy: null, lockedAt: null });
           }
         } catch (error) {

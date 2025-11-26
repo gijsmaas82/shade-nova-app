@@ -1,6 +1,10 @@
 <template>
-  <NavBar />
-  <router-view/>
+  <div class="app-shell">
+    <NavBar />
+    <main class="view-shell">
+      <router-view />
+    </main>
+  </div>
 </template>
 
 <script>
@@ -14,23 +18,19 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin: 0;
+.app-shell {
+  min-height: 100vh;
 }
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+
+.view-shell {
+  padding-top: calc(var(--navbar-height, 96px) + 20px);
+  padding-bottom: 32px;
 }
-html, body {
-  width: 100%;
-  height: 100%;
-  /* overflvow: hidden; */
-  /* background: #000; */
+
+@media (min-width: 768px) {
+  .view-shell {
+    padding-top: calc(var(--navbar-height, 96px) + 32px);
+  }
 }
 </style>
+

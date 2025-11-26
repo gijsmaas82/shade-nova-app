@@ -1,241 +1,294 @@
 <template>
-  <div class="container">
-    <div v-if="!transitionToShade" class="letters">
-      <div v-for="(letter, index) in letters" :key="index" class="letter-wrapper">
-        <span class="letter" :style="{ animationDelay: `${index * 0.8}s` }">
-          {{ letter.char }}
-        </span>
-        <span class="word" :class="{ 'show-word': showWords }" :style="{ animationDelay: `${3 + index * 0.5}s` }">
-          {{ letter.word }}
-        </span>
+  <div class="home">
+    <section class="home__highlights">
+      <span class="badge">Nieuwe missie</span>
+        <h1 class="home__title">De Nacht van de Sneeuwuil</h1>
+        <p class="home__subtitle">
+          Stap in de exclusieve wereld van S.H.A.D.E. Verzamel codes op het leerplein, los high-tech missies op en ontgrendel
+          de geheime kluis.
+        </p>
+      <h2 class="section-heading">Wat staat je te wachten?</h2>
+      <p class="section-subtext">Elke missie prikkelt een andere vaardigheid. Kies slim, werk samen en blijf scherp.</p>
+      <div class="home__highlight-grid">
+        <article v-for="item in highlights" :key="item.title" class="home__highlight card">
+          <div class="home__highlight-icon">{{ item.icon }}</div>
+          <h3>{{ item.title }}</h3>
+          <p>{{ item.description }}</p>
+        </article>
       </div>
-    </div>
+    </section>
 
-    <div v-if="transitionToShade" class="shade-container fade-in">
-      <h1 class="shade-title fade-up">S.H.A.D.E</h1>
-      <h2 class="subtitle fade-in-delayed">Presents</h2>
-      <h3 class="game-title fade-in-later">De Nacht van de Sneeuwuil</h3>
-      <div class="button-wrapper fade-in-last">
-        <img class="button-img" src="sneeuwuil.png"/>
-        <button class="start-button " @click="startGame">Start Spel</button>
+    <section class="home__timeline card">
+      <h2 class="section-heading">Zo word je een S.H.A.D.E agent</h2>
+      <ol class="home__timeline-list">
+        <li v-for="(step, index) in steps" :key="index" class="home__timeline-step">
+          <div class="home__step-index">{{ index + 1 }}</div>
+          <div>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.description }}</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+    <section class="home__hero card surface-frosted">
+      <div class="home__hero-copy">
+        <div class="home__actions">
+          <button class="btn" @click="startGame">
+            Start jouw missie
+          </button>
+          <button class="btn btn--ghost" @click="openInvite">
+            Scan uitnodiging
+          </button>
+        </div>
+        <div class="home__meta">
+          <div class="stat-pill">
+            <span>🧠</span>
+            <span>5 unieke skills</span>
+          </div>
+          <div class="stat-pill">
+            <span>🔐</span>
+            <span>1 geheime kluis</span>
+          </div>
+        </div>
       </div>
-    </div>
+      <div class="home__hero-visual shadow-ring">
+        <img :src="heroImage" alt="Sneeuwuil" />
+        <div class="home__glow"></div>
+      </div>
+    </section>
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 export default {
   setup() {
-    const letters = ref([
-      { char: 'S', word: 'ociety for the' },
-      { char: 'H', word: 'idden' },
-      { char: 'A', word: 'dvancement of' },
-      { char: 'D', word: 'igital' },
-      { char: 'E', word: 'ducation' }
-    ]);
-    const showWords = ref(false);
-    const transitionToShade = ref(false);
     const router = useRouter();
+    const heroImage = new URL('@/assets/sneeuwuil.png', import.meta.url).href;
 
-    onMounted(() => {
-      setTimeout(() => {
-        showWords.value = true;
-        setTimeout(() => {
-          showWords.value = false;
-          setTimeout(() => {
-            transitionToShade.value = true;
-          }, 1500); // Extra vertraging voordat de letters omhoog bewegen
-        }, 3000);
-      }, 4000);
-    });
+    const highlights = ref([
+      {
+        icon: '🧭',
+        title: 'Verken het leerplein',
+        description: 'Ontdek vijf fysieke spelzones, elk met een unieke uitdaging en eigen sfeer.'
+      },
+      {
+        icon: '🕵️',
+        title: 'Werk als een echte agent',
+        description: 'Gebruik jouw inzicht, creativiteit en team om te ontsnappen uit digitale complotten.'
+      },
+      {
+        icon: '🔓',
+        title: 'Ontgrendel de kluis',
+        description: 'Verzamel de vijf cijfers en kraak de S.H.A.D.E vaultcode om je badge te verdienen.'
+      }
+    ]);
+
+    const steps = ref([
+      {
+        title: 'Meld je aan',
+        description: 'Start de missie, voer je codenaam in en ontvang jouw persoonlijke kluiscode.'
+      },
+      {
+        title: 'Voltooi vijf missies',
+        description: 'Ga naar de aangegeven locaties, speel de games en verzamel cijfers voor de kluis.'
+      },
+      {
+        title: 'Claim je badge',
+        description: 'Keer terug naar de Snow Owl hub, voer de cijfers in en word officieel S.H.A.D.E agent.'
+      }
+    ]);
 
     const startGame = () => {
-      console.log("Spel gestart");
-      router.push("/snowowl");
+      router.push('/snowowl');
     };
 
-    return { letters, showWords, transitionToShade, startGame };
+    const openInvite = () => {
+      router.push('/qrcode');
+    };
+
+    return { highlights, steps, startGame, openInvite, heroImage };
   }
 };
 </script>
 
 <style scoped>
-.container {
-  padding: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: radial-gradient(circle, #222 30%, #111 100%);
-  color: #ccc;
-  font-family: 'Orbitron', sans-serif;
-  transition: opacity 1s ease-in-out;
-}
-
-.letters {
-  font-family: 'Creepster', cursive;
+.home {
   display: flex;
   flex-direction: column;
-  align-items: start;
+  gap: var(--gap-lg);
+  padding: 0 1.25rem;
 }
 
-.letter-wrapper {
-  display: flex;
-  align-items: center;
-  font-size: 4rem;
-  font-weight: bold;
-  text-transform: uppercase;
+.home__hero {
+  display: grid;
+  gap: var(--gap-md);
+  padding: 2.25rem 1.75rem;
+  position: relative;
+  overflow: hidden;
 }
 
-.letter {
-  opacity: 0;
-  transform: translateY(-50px);
-  animation: slide-in 1s forwards ease-in-out;
+.home__hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(124, 92, 255, 0.22), transparent 55%);
+  z-index: 0;
 }
 
-@keyframes slide-in {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.word {
- 
-  opacity: 0;
-  font-size: 1.5rem;
-  margin-left: 1rem;
-  color: #999;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-  transition: opacity 1s ease-in-out;
-  animation: fade-in 1s forwards ease-in-out;
-}
-
-@keyframes fade-in {
-  to {
-    opacity: 1;
-  }
-}
-
-/* S.H.A.D.E verschijnt omhoog */
-.shade-container {
-  font-family: 'Creepster', cursive;
+.home__hero-copy {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  gap: 1rem;
 }
 
-.shade-title {
- 
-  font-size: 4rem;
-  font-weight: bold;
-  color: #fff;
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-  opacity: 0;
-  animation: fade-up 1.5s forwards ease-in-out 1s;
+.home__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 5vw, 2.6rem);
+  margin: 0;
+  letter-spacing: 0.03em;
 }
 
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.home__subtitle {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 1rem;
 }
 
-/* "Presents" verschijnt eerst */
-.subtitle {
-  font-family: 'Sixtyfour Convergence', sans-serif;
-  font-size: 2rem;
-  color: #ffcc00;
-  opacity: 0;
-  animation: fade-in-delayed 1.5s forwards ease-in-out 2s;
-}
-
-@keyframes fade-in-delayed {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* "De Nacht van de Sneeuwuil" verschijnt later */
-.game-title {
- 
-  font-size: 3rem;
-  font-weight: bold;
-  color: #00ffff;
-  text-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
-  opacity: 0;
-  animation: fade-in-later 2s forwards ease-in-out 3s;
-}
-
-@keyframes fade-in-later {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.button-wrapper {
-  animation: fade-in-last 2s forwards ease-in-out 5s;
-  opacity: 0;
-  background: linear-gradient(135deg, #444, #111);
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+.home__actions {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.home__meta {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.home__hero-visual {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem 0;
+}
+
+.home__hero-visual img {
+  width: min(280px, 70vw);
+  filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.45));
+}
+
+.home__glow {
+  position: absolute;
+  inset: auto 20% 0 20%;
+  height: 30px;
+  background: radial-gradient(circle, rgba(15, 20, 40, 0.55), transparent 70%);
+  z-index: -1;
+}
+
+.home__highlights {
+  display: flex;
   flex-direction: column;
-}
-.button-img {
-  margin: 10px;
-  border:#222;
-  border-radius:10px;
-  box-shadow: #00ffff;
-  max-width: 80%;
-}
-/* Startknop komt als laatste */
-.start-button {
-  font-family: 'Sixtyfour Convergence', sans-serif;
-  margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #fff;
-  background: linear-gradient(135deg, #444, #111);
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s ease-in-out;
-  margin: 10px;
-  /* opacity: 0; */
-  
+  gap: 0.75rem;
+  padding: 0 0.25rem;
+  text-align: left;
 }
 
-@keyframes fade-in-last {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.home__highlight-grid {
+  display: grid;
+  gap: var(--gap-md);
 }
 
-.start-button:hover {
-  background: linear-gradient(135deg, #666, #222);
+.home__highlight {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: left;
+}
+
+.home__highlight-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  display: grid;
+  place-items: center;
+  font-size: 1.4rem;
+}
+
+.home__highlight h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.home__highlight p {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.home__timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+}
+
+.home__timeline-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.home__timeline-step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.home__step-index {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(124, 92, 255, 0.18);
+  color: var(--accent-color);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+.home__timeline-step h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.home__timeline-step p {
+  margin: 0.25rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+@media (min-width: 768px) {
+  .home {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .home__hero {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 2.75rem 2.5rem;
+  }
+
+  .home__highlight-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 </style>

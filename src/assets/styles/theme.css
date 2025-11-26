@@ -1,0 +1,288 @@
+@import url('https://fonts.googleapis.com/css2?family=Changa+One&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --app-background: radial-gradient(120% 120% at 20% 10%, #232b4d 0%, #080c1e 45%, #03040d 100%);
+  --surface-color: rgba(9, 13, 28, 0.88);
+  --surface-strong: rgba(16, 21, 44, 0.92);
+  --surface-highlight: rgba(39, 52, 92, 0.55);
+  --border-color: rgba(255, 255, 255, 0.09);
+  --divider-color: rgba(255, 255, 255, 0.06);
+  --text-primary: #f6f7ff;
+  --text-secondary: rgba(236, 238, 255, 0.72);
+  --text-disabled: rgba(236, 238, 255, 0.38);
+  --accent-color: #7c5cff;
+  --accent-strong: #6148ff;
+  --accent-soft: rgba(124, 92, 255, 0.18);
+  --success-color: #4ae38c;
+  --warning-color: #f4c447;
+  --danger-color: #ff6b6b;
+  --shadow-color: rgba(3, 6, 22, 0.65);
+  --radius-xl: 32px;
+  --radius-lg: 24px;
+  --radius-md: 18px;
+  --radius-sm: 12px;
+  --navbar-height: 96px;
+  --gap-lg: 2.75rem;
+  --gap-md: 1.75rem;
+  --gap-sm: 1rem;
+  --font-display: 'Changa One', system-ui, sans-serif;
+  --font-body: 'Manrope', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  background: var(--app-background);
+  color: var(--text-primary);
+  line-height: 1.6;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: -35vw -35vw auto auto;
+  width: 70vw;
+  height: 70vw;
+  background: radial-gradient(circle, rgba(124, 92, 255, 0.35), transparent 60%);
+  filter: blur(0);
+  z-index: -1;
+  opacity: 0.8;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto auto -45vw -30vw;
+  width: 90vw;
+  height: 90vw;
+  background: radial-gradient(circle, rgba(44, 212, 217, 0.18), transparent 70%);
+  z-index: -1;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font-family: inherit;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: rgba(17, 22, 43, 0.9);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(236, 238, 255, 0.45);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.18);
+  background: rgba(19, 25, 52, 0.95);
+}
+
+button {
+  font-family: inherit;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: var(--radius-sm);
+  border: none;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  background: linear-gradient(135deg, var(--accent-strong), var(--accent-color));
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+  box-shadow: 0 18px 35px rgba(124, 92, 255, 0.2);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:hover {
+  filter: brightness(1.05);
+}
+
+.btn--ghost {
+  background: rgba(124, 92, 255, 0.12);
+  color: var(--accent-color);
+  box-shadow: none;
+  border: 1px solid rgba(124, 92, 255, 0.25);
+}
+
+.btn--ghost:hover {
+  background: rgba(124, 92, 255, 0.18);
+}
+
+.btn--subtle {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  box-shadow: none;
+}
+
+.btn:disabled,
+button:disabled {
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: var(--text-disabled) !important;
+  box-shadow: none !important;
+}
+
+.card {
+  background: var(--surface-color);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  padding: var(--gap-md);
+  box-shadow: 0 25px 45px var(--shadow-color);
+  backdrop-filter: blur(18px);
+  position: relative;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  pointer-events: none;
+}
+
+.surface-frosted {
+  background: var(--surface-strong);
+  box-shadow: 0 35px 55px rgba(3, 6, 22, 0.7);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  background: rgba(124, 92, 255, 0.16);
+  color: var(--accent-color);
+  border: 1px solid rgba(124, 92, 255, 0.28);
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.section-heading {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+  color: #ffffff;
+}
+
+.section-subtext {
+  margin: 0.35rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.muted {
+  color: var(--text-secondary);
+}
+
+.grid {
+  display: grid;
+  gap: var(--gap-md);
+}
+
+.shadow-ring {
+  position: relative;
+}
+
+.shadow-ring::before {
+  content: "";
+  position: absolute;
+  inset: -25% 5% auto 5%;
+  height: 45%;
+  background: radial-gradient(circle, rgba(7, 12, 27, 0.4), transparent 70%);
+  z-index: -1;
+}
+
+@media (min-width: 768px) {
+  body::before {
+    width: 45vw;
+    height: 45vw;
+  }
+
+  body::after {
+    width: 55vw;
+    height: 55vw;
+  }
+
+  .card {
+    padding: calc(var(--gap-md) + 0.5rem);
+  }
+
+  .section-heading {
+    font-size: 1.6rem;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(124, 92, 255, 0.35);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+

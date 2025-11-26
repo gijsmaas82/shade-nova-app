@@ -1,50 +1,41 @@
-
 <template>
-  <div class="container">
-    <div class="opening">
-      <h1>Laser</h1>
-      <h1>L🔒ckdown</h1>
-    </div>
-
-    <!-- Overlay met uitlegstappen -->
-    <div v-if="showOverlay" class="overlay">  
-      <div class="overlay-content">
-        <h2>Speluitleg</h2>
-        <p>{{ steps[currentStep] }}</p>
-
-        <!-- Code invoerveld verschijnt bij de laatste stap -->
-        <div v-if="currentStep === steps.length - 1">
-          <label for="codeInput">Voer de code in:</label>
-
-          <!-- ✅ Toon alleen input en button als de code nog niet correct is -->
-          <div v-if="!codeCorrect">
-            <input 
-              type="text" 
-              id="codeInput" 
-              v-model="enteredCode" 
-              placeholder="4567"
-            />
-            <button @click="submitCode">Submit</button>
-            <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p> <!-- ❌ Foutmelding -->
-          </div>
-
-          <!-- ✅ Gefeliciteerd bericht bij juiste code -->
-          <p v-else class="success-text">🎉 Gefeliciteerd, je hebt de code geraden! 🎉</p>
-        </div>
-
-        <!-- Navigatie knoppen -->
-        <div class="buttons">
-          <button @click="prevStep" :disabled="currentStep === 0">Vorige</button>
-          <button @click="nextStep" :disabled="currentStep === steps.length - 1">Volgende</button>
-        </div>
+  <div class="mission mission--laser">
+    <section class="mission__hero card surface-frosted">
+      <div class="mission__hero-copy">
+        <span class="badge">Missie 3</span>
+        <h1>Laser Lockdown</h1>
+        <p>Ga naar lokaal 2.11 en ontwijk het lasersysteem. Leid de straal naar de juiste ontvanger en vind de ontsnappingscode.</p>
       </div>
-    </div>
-    <!-- <div class="game-images">
-      <img :src="gameimages[0]" class="gameimage" />
-      <img :src="gameimages[1]" class="gameimage" />
-      <img :src="gameimages[2]" class="gameimage" />
-      <img :src="gameimages[3]" class="gameimage" />
-    </div> -->
+      <div class="mission__hero-visual shadow-ring">
+        <img :src="heroImage" alt="Laser Lockdown" />
+      </div>
+    </section>
+
+    <section class="mission__panel card">
+      <div class="mission__panel-header">
+        <h2 class="section-heading">Briefing</h2>
+        <span class="stat-pill">Stap {{ currentStep + 1 }} van {{ steps.length }}</span>
+      </div>
+      <p class="section-subtext">{{ steps[currentStep] }}</p>
+
+      <div v-if="currentStep === steps.length - 1" class="mission__code-group">
+        <input
+          type="text"
+          v-model="enteredCode"
+          placeholder="Voer de code in"
+          maxlength="4"
+          @keydown.enter="submitCode"
+        />
+        <button class="btn" @click="submitCode">Bevestig</button>
+      </div>
+      <p v-if="errorMessage" class="mission__feedback is-error">{{ errorMessage }}</p>
+      <p v-if="codeCorrect" class="mission__feedback">Gefeliciteerd, je hebt de code geraden!</p>
+
+      <div class="mission__step-controls">
+        <button class="btn btn--ghost" @click="prevStep" :disabled="currentStep === 0">Vorige</button>
+        <button class="btn" @click="nextStep" :disabled="currentStep === steps.length - 1">Volgende</button>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -58,28 +49,33 @@ export default {
   name: "LaserLockdown",
   data() {
     return {
-      showOverlay: true,
       currentStep: 0,
       enteredCode: "",
       correctCode: "1234",
-      codeCorrect: false, // ✅ Nieuwe statusvariabele
-      errorMessage: "", // ❌ Voor foutmelding
-      gameimages: [new URL('@/assets/game3/laser1.png', import.meta.url).href, new URL('@/assets/game3/laser2.png', import.meta.url).href, new URL('@/assets/game3/laser3.png', import.meta.url).href, new URL('@/assets/game3/laser4.png', import.meta.url).href],
+      codeCorrect: false,
+      errorMessage: "",
+      gameStore: useGameStore(),
+      router: useRouter(),
+      heroImage: new URL('@/assets/game3/laser1.png', import.meta.url).href,
       steps: [
-        "Welkom bij Laser Lockdown! 🚀 Ga naar lokaal 2.07 om de game te spelen",
-        "In het spel verbind lasers met spiegels om de deur te openen en te ontsnappen!",
-        "Gebruik de spiegels om de laserstraal in de juiste richting te sturen.",
-        "Sommige levels hebben obstakels die je moet omzeilen. Denk strategisch na!",
-        "Als de laser de juiste plek bereikt, wordt de deur ontgrendeld en kun je ontsnappen!",
-        "Veel succes en veel plezier! 🎉 Klik op 'Volgende' voor de code om te ontsnappen."
+        "Welkom bij Laser Lockdown! Ga naar lokaal 2.11 om de missie te starten.",
+        "Verbind lasers met spiegels om de deur te openen en te ontsnappen.",
+        "Denk strategisch: sommige spiegels zijn misleidingen.",
+        "Komt de laser aan op de juiste plek? Dan gaat de deur open.",
+        "Voer de code in die verschijnt wanneer je ontsnapt."
       ]
     };
   },
-  setup() {
-    return {
-      gameStore: useGameStore(),
-      router: useRouter(),
-    };
+  async beforeRouteLeave(_to, _from, next) {
+    if (!this.gameStore.gameProgress.game3completed) {
+      try {
+        const gameRef = doc(db, "games", "game3");
+        await updateDoc(gameRef, { available: true, lockedBy: null, lockedAt: null });
+      } catch (error) {
+        console.error("Fout bij het vrijgeven van game3:", error);
+      }
+    }
+    next();
   },
   methods: {
     nextStep() {
@@ -93,10 +89,17 @@ export default {
       }
     },
     async submitCode() {
-      if (this.enteredCode === this.correctCode) {
-        this.codeCorrect = true; // ✅ Zet status op correct
+      const attempt = this.enteredCode.trim().toUpperCase();
 
-        // 🔹 Update voortgang in Pinia store en Firestore
+      if (!attempt) {
+        this.errorMessage = "Vul de code in voordat je bevestigt.";
+        this.codeCorrect = false;
+        return;
+      }
+
+      if (attempt === this.correctCode) {
+        this.codeCorrect = true;
+        this.errorMessage = "";
         this.gameStore.completeGame("game3completed");
 
         try {
@@ -108,22 +111,19 @@ export default {
             const playerDoc = querySnapshot.docs[0];
             await updateDoc(playerDoc.ref, { game3completed: true });
 
-            // 🔹 Zet het spel opnieuw beschikbaar
             const gameRef = doc(db, "games", "game3");
-            await updateDoc(gameRef, { available: true });
-          } else {
-            console.error("Speler niet gevonden in Firestore!");
+            await updateDoc(gameRef, { available: true, lockedBy: null, lockedAt: null });
           }
         } catch (error) {
           console.error("Fout bij updaten van Firestore:", error);
         }
 
-        // 🔹 Stuur speler na 2 seconden naar /snowowl
         setTimeout(() => {
           this.router.push("/snowowl");
         }, 2000);
       } else {
-        this.errorMessage = "❌ Helaas, probeer het nog een keer."; // ❌ Toon foutmelding
+        this.errorMessage = "Helaas, probeer het nog een keer.";
+        this.codeCorrect = false;
       }
     }
   }
@@ -131,156 +131,110 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  margin-top: 5vh;
-  font-family: 'Sixtyfour Convergence', sans-serif;
-  background-color: #0f0b45;
-  text-align: center;
-  min-height: 100vh;
-  color: white;
+.mission {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  gap: var(--gap-lg);
+  padding: 0 1.25rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.mission__hero {
+  display: grid;
+  gap: var(--gap-md);
+  padding: 2rem 1.75rem;
   align-items: center;
 }
 
-.opening h1 {
-  font-size: 3em;
+.mission__hero-copy h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 2.4rem);
+  margin: 0.25rem 0 0.75rem;
 }
 
-.overlay {
-  background: rgba(20, 20, 50, 0.95);
-  padding: 30px;
-  border-radius: 15px;
-  text-align: center;
-  max-width: 450px;
-  border: 2px solid #00ffff;
-  box-shadow: 0 0 15px #00ffff;
-  animation: fadeIn 0.5s ease-in-out;
-  margin: 20px;
+.mission__hero-copy p {
+  margin: 0;
+  color: var(--text-secondary);
 }
 
-.overlay h2 {
-  color: #ff00ff;
-  text-shadow: 0 0 10px #ff00ff;
-  font-size: 2em;
+.mission__hero-visual {
+  display: grid;
+  place-items: center;
 }
 
-.overlay p {
-  margin-bottom: 20px;
-  font-size: 1.1em;
-  color: #ddd;
-  line-height: 1.5;
+.mission__hero-visual img {
+  width: min(260px, 70vw);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.buttons {
-  margin-top: 20px;
+.mission__panel {
+  display: grid;
+  gap: 1rem;
+  text-align: left;
+}
+
+.mission__panel-header {
   display: flex;
-  justify-content: center;
-  gap: 15px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
 }
-.buttons {
-  margin-top: 20px;
+
+.mission__code-group {
   display: flex;
-  justify-content: center;
-  gap: 15px;
-}
-.overlay-content button {
-  padding: 10px 15px;
-  font-size: 1.1em;
-  cursor: pointer;
-  border-radius: 5px;
-  border: none;
-  color: white;
-  font-weight: bold;
-  text-transform: uppercase;
-  transition: all 0.3s ease-in-out;
+  gap: 0.75rem;
 }
 
-.overlay-content button {
-  background: linear-gradient(90deg, #ff00ff, #00ffff);
-  box-shadow: 0 0 10px #ff00ff;
+.mission__feedback {
+  margin: 0;
+  color: var(--success-color);
+  font-weight: 600;
 }
 
-.buttons button {
-  padding: 10px 15px;
-  font-size: 1.1em;
-  cursor: pointer;
-  border-radius: 5px;
-  border: none;
-  color: white;
-  font-weight: bold;
-  text-transform: uppercase;
-  transition: all 0.3s ease-in-out;
+.mission__feedback.is-error {
+  color: var(--danger-color);
 }
 
-.buttons button:first-child {
-  background: linear-gradient(90deg, #ff00ff, #00ffff);
-  box-shadow: 0 0 10px #ff00ff;
+.mission__step-controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
-.buttons button:first-child:hover {
-  background: linear-gradient(90deg, #00ffff, #ff00ff);
-  box-shadow: 0 0 20px #00ffff;
-}
-
-.buttons button:last-child {
-  background: linear-gradient(90deg, #ff4500, #ff0000);
-  box-shadow: 0 0 10px #ff0000;
-}
-
-.buttons button:last-child:hover {
-  background: linear-gradient(90deg, #ff0000, #ff4500);
-  box-shadow: 0 0 20px #ff4500;
-}
-
-input {
-  padding: 10px;
-  margin-top: 10px;
-  font-size: 1.1em;
-  border-radius: 5px;
-  border: 1px solid #00ffff;
-  background-color: #1a1a3d;
-  color: white;
-}
-
-input:focus {
-  border-color: #ff00ff;
-  outline: none;
-}
-
-.error-text {
-  color: #ff4d4d;
-  margin-top: 10px;
-  font-size: 1.2em;
-}
-
-.success-text {
-  color: #00ff00;
-  font-size: 1.4em;
-  font-weight: bold;
-  margin-top: 20px;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
+@media (max-width: 640px) {
+  .mission__code-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
   }
-  to {
-    opacity: 1;
-    transform: scale(1);
+
+  .mission__code-group .btn {
+    width: 100%;
+  }
+
+  .mission__code-group input {
+    width: 100%;
+  }
+
+  .mission__step-controls {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .mission__step-controls .btn {
+    width: 100%;
   }
 }
 
-.gameimages {
-  display: flex;
-  flex-direction: column;
-}
-.gameimage {
-  max-width: 80%;
-  border:#000000;
-  border-radius: 10px;
-  margin: 10px;
+@media (min-width: 768px) {
+  .mission__hero {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+
+  .mission__panel {
+    padding: 2rem 1.75rem;
+  }
 }
 </style>

@@ -1,73 +1,77 @@
 <template>
-  <div class="game-container">
-    <div class="stars"></div>
-    <div class="twinkling"></div>
-    
-    <div class="game-header">
-      <h1 class="title">Dimensions collapsing</h1>
-      <div class="instructions">
-        <p>Loop naar het grote digibord op het leerplein om te beginnen met het spel</p>
-        <p>Op het digibord staat een digitale versie van ons leerplein.</p>
-        <p class="instruction-detail">Zoek de verschillen tussen het spel en de echte wereld. Vind de 5 verborgen letters in de echte wereld! De gevonden letters kan je opslaan hieronder. Uiteindelijk moet je een woord maken van de 5 letters.</p>
+  <div class="mission mission--dimensions">
+    <section class="mission__hero card surface-frosted">
+      <div class="mission__hero-copy">
+        <span class="badge">Missie 1</span>
+        <h1>Dimensions Collapsing</h1>
+        <p>
+          Ga naar het digibord in lokaal 2.06 en stap de digitale tweelingwereld binnen. Vind de vijf verschillen tussen de
+          projectie en de echte wereld.
+        </p>
       </div>
-      <!-- <div class="game-images">
-        <img :src="gameimages[0]" class="gameimage" />
-        <img :src="gameimages[1]" class="gameimage" />
-      </div> -->
-    </div>
+      <div class="mission__hero-visual shadow-ring">
+        <img :src="heroImage" alt="Dimensions Collapsing" />
+      </div>
+    </section>
 
-    <div class="letter-progress">
-      <div class="letter-boxes">
-        <div v-for="(letter, index) in letters" 
-             :key="index" 
-             class="letter-box"
-             :class="{ 'found': letter !== '', 'pulse': letter !== '' && justFound === index }">
-          <input v-model="letters[index]" 
-                 class="letter-input" 
-                 maxlength="1" 
-                 @input="moveToNext(index, $event)"
-                 @keydown.backspace="moveToPrevious(index, $event)"
-                 ref="inputs" />
-          <div class="glow-effect" v-if="letter !== ''"></div>
+    <section class="mission__panel card">
+      <h2 class="section-heading">Zo pak je het aan</h2>
+      <ul class="mission__list">
+        <li><strong>Stap 1:</strong> Start het spel op het digibord in lokaal 2.06.</li>
+        <li><strong>Stap 2:</strong> Vergelijk wat je ziet met de echte omgeving op het leerplein.</li>
+        <li><strong>Stap 3:</strong> Vind de vijf letters die verborgen zitten in de echte wereld.</li>
+        <li><strong>Stap 4:</strong> Noteer de letters in deze missieconsole.</li>
+        <li><strong>Stap 5:</strong> Vorm het geheime woord en bevestig het om verder te gaan.</li>
+      </ul>
+    </section>
+
+    <section class="mission__panel card">
+      <div class="mission__panel-header">
+        <h2 class="section-heading">Log je gevonden letters</h2>
+        <span class="stat-pill">{{ lettersFound }} / {{ letters.length }} gevonden</span>
+      </div>
+      <p class="section-subtext">Tik elke letter in zodra je hem hebt ontdekt. Ze blijven opgeslagen terwijl jij verder zoekt.</p>
+      <div class="mission__letters">
+        <div
+          v-for="(letter, index) in letters"
+          :key="index"
+          :class="['mission__letter', { 'is-active': letter !== '' }]"
+        >
+          <input
+            v-model="letters[index]"
+            class="mission__letter-input"
+            maxlength="1"
+            @input="moveToNext(index, $event)"
+            @keydown.backspace="moveToPrevious(index, $event)"
+            ref="inputs"
+          />
         </div>
       </div>
-    </div>
-    
-    <div class="word-submission">
-      <div class="word-submission-header">
-        <h2 class="section-title">Maak het woord</h2>
-        <!-- Progress bar moved here -->
-        <div class="progress-status">
-          <div class="progress-bar">
-            <div class="progress-fill" :style="{ width: (lettersFound / letters.length * 100) + '%' }"></div>
-          </div>
-          <span class="found-count">{{ lettersFound }} / {{ letters.length }}</span> letters gevonden
-        </div>
-      </div>
-      
-      <div class="word-input-container">
-        <input v-model="wordInput" 
-               class="word-input" 
-               placeholder="Typ hier je woord" 
-               maxlength="5"
-               @keyup.enter="checkWord" />
-        <button @click="checkWord" class="check-button">
-          <span class="button-text">Controleer</span>
-          <span class="button-icon">➔</span>
+    </section>
+
+    <section class="mission__panel card">
+      <h2 class="section-heading">Ontcijfer het woord</h2>
+      <p class="section-subtext">Combineer alle letters en voer het codewoord in om de missie te voltooien.</p>
+      <div class="mission__word-group">
+        <input
+          v-model="wordInput"
+          class="mission__word-input"
+          placeholder="Typ jouw codewoord"
+          maxlength="5"
+          @keyup.enter="checkWord"
+        />
+        <button class="btn" @click="checkWord">
+          Controleer
         </button>
       </div>
-    </div>
-    
-    <transition name="fade">
-      <div v-if="message" class="result-modal" :class="{'correct': isCorrect, 'incorrect': !isCorrect}">
-        <div class="result-container">
-          <div class="result-icon" v-if="isCorrect">
-            <div class="firework" v-for="n in 5" :key="n"></div>
-            ✓
-          </div>
-          <div class="result-icon" v-else>✗</div>
-          <div class="result-message">{{ message }}</div>
-          <button @click="closeMessage" class="close-result">Sluiten</button>
+    </section>
+
+    <transition name="fade-scale">
+      <div v-if="message" class="mission__modal">
+        <div :class="['mission__modal-card', 'card', 'surface-frosted', { 'is-success': isCorrect, 'is-error': !isCorrect }]">
+          <h3>{{ isCorrect ? 'Missie voltooid' : 'Probeer het opnieuw' }}</h3>
+          <p>{{ message }}</p>
+          <button class="btn btn--ghost" @click="closeMessage">Sluiten</button>
         </div>
       </div>
     </transition>
@@ -88,11 +92,9 @@ export default {
       correctWord: "KLAAR",
       message: "",
       isCorrect: false,
-      justFound: null,
-      confetti: null,
-      gameStore: useGameStore(), // 🔹 Pinia store
-      router: useRouter(), // 🔹 Vue Router
-      gameimages: [new URL('@/assets/game1/digitaltwin1.png', import.meta.url).href, new URL('@/assets/game1/digitaltwin2.png', import.meta.url).href]
+      gameStore: useGameStore(),
+      router: useRouter(),
+      heroImage: new URL('@/assets/game1/digitaltwin1.png', import.meta.url).href
     };
   },
   computed: {
@@ -100,57 +102,58 @@ export default {
       return this.letters.filter(letter => letter !== "").length;
     }
   },
-  mounted() {
-    this.initializeStarField();
+  async beforeRouteLeave(_to, _from, next) {
+    if (!this.gameStore.gameProgress.game1completed) {
+      try {
+        const gameRef = doc(db, "games", "game1");
+        await updateDoc(gameRef, { available: true, lockedBy: null, lockedAt: null });
+      } catch (error) {
+        console.error("Fout bij het vrijgeven van game1:", error);
+      }
+    }
+    next();
   },
   methods: {
     async checkWord() {
       const word = this.wordInput.toUpperCase();
-      
+
       if (!word) {
         this.message = "Voer eerst een woord in!";
         this.isCorrect = false;
         return;
       }
-      
+
       if (word.length !== this.correctWord.length) {
         this.message = `Je woord moet uit ${this.correctWord.length} letters bestaan.`;
         this.isCorrect = false;
         return;
       }
-      
+
       if (word === this.correctWord) {
         this.message = "Gefeliciteerd! Je hebt het geheime woord ontdekt en kunt nu verder gaan!";
         this.isCorrect = true;
         this.triggerConfetti();
         this.gameStore.gameProgress.game1completed = true;
-        this.gameStore.saveProgress(); // Bewaar in LocalStorage
+        this.gameStore.saveProgress();
 
-        // 🔹 Zoek Firestore document op basis van playerName
         try {
           const gameInstanceRef = collection(db, "gameinstances");
           const q = query(gameInstanceRef, where("name", "==", this.gameStore.playerName));
           const querySnapshot = await getDocs(q);
 
           if (!querySnapshot.empty) {
-            // Haal het eerste document op (aangezien je verwacht dat er maar één match is)
             const playerDoc = querySnapshot.docs[0];
             await updateDoc(playerDoc.ref, { game1completed: true });
-            console.log("Game 1 voortgang opgeslagen in Firestore! ✅");
 
-             // 🔹 Zet het spel weer op 'beschikbaar' in de games-collectie
             const gameRef = doc(db, "games", "game1");
-            await updateDoc(gameRef, { available: true });
-            console.log("Game 1 opnieuw beschikbaar gemaakt in Firestore! 🔓");
-          } else {
-            console.error("Speler niet gevonden in Firestore!");
+            await updateDoc(gameRef, { available: true, lockedBy: null, lockedAt: null });
           }
         } catch (error) {
           console.error("Fout bij updaten van Firestore:", error);
         }
 
         setTimeout(() => {
-          this.router.push("/snowowl"); // 🔹 Stuur speler naar /snowowl
+          this.router.push("/snowowl");
         }, 1000);
       } else {
         this.message = "Dat is niet het juiste woord. Probeer het nog eens!";
@@ -160,15 +163,6 @@ export default {
     },
     moveToNext(index, event) {
       if (event.inputType === "insertText" && event.data) {
-        // Play sound effect
-        this.playLetterSound();
-        
-        // Add animation
-        this.justFound = index;
-        setTimeout(() => {
-          this.justFound = null;
-        }, 2000);
-        
         if (index < this.letters.length - 1) {
           this.$nextTick(() => {
             this.$refs.inputs[index + 1].focus();
@@ -186,11 +180,10 @@ export default {
     closeMessage() {
       this.message = "";
       if (this.isCorrect) {
-        this.$router.push('/');
+        this.router.push('/snowowl');
       }
     },
     triggerConfetti() {
-      // Create confetti canvas
       const canvas = document.createElement('canvas');
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -200,11 +193,10 @@ export default {
       canvas.style.zIndex = 1000;
       canvas.style.pointerEvents = 'none';
       document.body.appendChild(canvas);
-      
+
       const ctx = canvas.getContext('2d');
       const confettiPieces = [];
-      
-      // Create confetti pieces
+
       for (let i = 0; i < 200; i++) {
         confettiPieces.push({
           x: Math.random() * canvas.width,
@@ -215,610 +207,272 @@ export default {
           angle: Math.random() * 2 * Math.PI
         });
       }
-      
-      // Animate confetti
+
       const animate = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
+
         let stillActive = false;
-        
+
         confettiPieces.forEach(piece => {
           piece.y += piece.speed;
           piece.x += Math.sin(piece.angle) * 2;
-          
+
           ctx.fillStyle = piece.color;
           ctx.fillRect(piece.x, piece.y, piece.size, piece.size);
-          
+
           if (piece.y < canvas.height) {
             stillActive = true;
           }
         });
-        
+
         if (stillActive) {
           requestAnimationFrame(animate);
         } else {
           document.body.removeChild(canvas);
         }
       };
-      
+
       animate();
     },
     shakeWordInput() {
-      const input = document.querySelector('.word-input');
-      input.classList.add('shake');
+      const input = document.querySelector('.mission__word-input');
+      if (!input) return;
+      input.classList.add('is-shaking');
       setTimeout(() => {
-        input.classList.remove('shake');
+        input.classList.remove('is-shaking');
       }, 500);
-    },
-    playLetterSound() {
-      // Create audio context and oscillator
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        
-        oscillator.type = 'sine';
-        oscillator.frequency.value = 440 + Math.random() * 220; // Random tone
-        gainNode.gain.value = 0.1;
-        
-        oscillator.start();
-        
-        // Fade out
-        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
-        
-        // Stop after fade out
-        setTimeout(() => {
-          oscillator.stop();
-        }, 300);
-      } catch (e) {
-        console.log('Audio not supported');
-      }
-    },
-    initializeStarField() {
-      const stars = document.querySelector('.stars');
-      
-      // Add stars
-      for (let i = 0; i < 100; i++) {
-        const star = document.createElement('div');
-        star.className = 'star';
-        star.style.top = `${Math.random() * 100}%`;
-        star.style.left = `${Math.random() * 100}%`;
-        star.style.animationDelay = `${Math.random() * 10}s`;
-        star.style.animationDuration = `${Math.random() * 3 + 1}s`;
-        stars.appendChild(star);
-      }
     }
   }
 };
 </script>
 
 <style scoped>
-.game-container {
-  margin-top: 5vh;
-  font-family: 'Montserrat', sans-serif;
-  background-color: #000000;
-  min-height: 100vh;
-  padding: 2rem;
+.mission {
   display: flex;
   flex-direction: column;
+  gap: var(--gap-lg);
+  padding: 0 1.25rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.mission__hero {
+  display: grid;
+  gap: var(--gap-md);
+  padding: 2rem 1.75rem;
   align-items: center;
-  justify-content: flex-start;
-  color: #ecf0f1;
-  position: relative;
-  overflow: hidden;
 }
 
-/* Stars background */
-.stars {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
+.mission__hero-copy h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 2.4rem);
+  margin: 0.25rem 0 0.75rem;
 }
 
-.star {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background-color: white;
-  border-radius: 50%;
-  opacity: 0.7;
-  animation: twinkle ease infinite;
+.mission__hero-copy p {
+  margin: 0;
+  color: var(--text-secondary);
 }
 
-@keyframes twinkle {
-  0% { opacity: 0; }
-  50% { opacity: 1; }
-  100% { opacity: 0; }
+.mission__hero-visual {
+  display: grid;
+  place-items: center;
 }
 
-.twinkling {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  background: linear-gradient(125deg, rgba(0,0,0,0.8) 0%, rgba(20,20,40,0.8) 100%);
+.mission__hero-visual img {
+  width: min(260px, 70vw);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.game-header {
-  text-align: center;
-  margin-bottom: 2rem;
-  width: 100%;
-  max-width: 800px;
-  position: relative;
-  z-index: 1;
-}
-.gameimages {
-  display: flex;
-  flex-direction: column;
-}
-.gameimage {
-  max-width: 80%;
-  border:#000000;
-  border-radius: 10px;
-}
-.title {
-  font-size: 3rem;
-  color: #ffffff;
-  margin-bottom: 1rem;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.6), 0 0 20px rgba(100, 100, 255, 0.4);
-  animation: glow 2s ease-in-out infinite alternate;
-}
-
-@keyframes glow {
-  from {
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.6), 0 0 20px rgba(100, 100, 255, 0.4);
-  }
-  to {
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(100, 100, 255, 0.6);
-  }
-}
-
-.instructions {
-  background-color: rgba(44, 62, 80, 0.7);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 100, 255, 0.2);
-  margin-bottom: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  backdrop-filter: blur(5px);
-}
-
-.instructions:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 100, 255, 0.3);
-}
-
-.instructions p {
-  margin: 0.5rem 0;
-  font-size: 1.1rem;
-}
-
-.instruction-detail {
-  color: #bdc3c7;
-  font-size: 0.95rem;
-  margin-top: 0.75rem;
-}
-
-.letter-progress {
-  width: 100%;
-  max-width: 800px;
-  margin-bottom: 2rem;
-  position: relative;
-  z-index: 1;
-}
-
-.letter-boxes {
-  display: flex;
-  justify-content: center;
+.mission__panel {
+  display: grid;
   gap: 1rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
+  text-align: left;
 }
 
-.letter-box {
-  position: relative;
-  width: 80px;
-  height: 80px;
-  background-color: rgba(70, 70, 70, 0.7);
-  border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  overflow: hidden;
-}
-
-.letter-box.found {
-  background-color: rgba(100, 100, 200, 0.3);
-  box-shadow: 0 8px 16px rgba(100, 100, 200, 0.3);
-  transform: translateY(-5px);
-}
-
-.letter-box.pulse {
-  animation: pulse 2s ease;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-.glow-effect {
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
-  top: -50%;
-  left: -50%;
-  opacity: 0;
-  animation: glow-animation 2s ease infinite;
-}
-
-@keyframes glow-animation {
-  0% { opacity: 0; }
-  50% { opacity: 0.5; }
-  100% { opacity: 0; }
-}
-
-.letter-input {
-  width: 60px;
-  height: 60px;
-  text-align: center;
-  font-size: 2rem;
-  font-weight: bold;
-  border: 3px solid rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
-  color: #ecf0f1;
-  background: transparent;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  position: relative;
-  z-index: 2;
-}
-
-.letter-box.found .letter-input {
-  border-color: #ffffff;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-}
-
-.letter-input:focus {
-  outline: none;
-  border-color: #ffffff;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
-}
-
-/* Progress status moved to word-submission-header */
-.progress-status {
-  font-size: 1rem;
-  color: #bdc3c7;
-  margin-left: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.progress-bar {
-  width: 150px;
-  height: 8px;
-  background-color: rgba(50, 50, 50, 0.7);
-  border-radius: 4px;
-  margin-bottom: 0.5rem;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #3498db, #9b59b6);
-  border-radius: 4px;
-  transition: width 0.5s ease;
-}
-
-.found-count {
-  font-weight: bold;
-  color: #ffffff;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-}
-
-.word-submission {
-  width: 100%;
-  max-width: 800px;
-  background-color: rgba(70, 70, 70, 0.7);
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-  margin-bottom: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  position: relative;
-  z-index: 1;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  backdrop-filter: blur(5px);
-}
-
-.word-submission:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(100, 100, 255, 0.2);
-}
-
-/* New header section for word submission with progress bar */
-.word-submission-header {
+.mission__panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.section-title {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #ffffff;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
-}
-
-.word-input-container {
-  display: flex;
   gap: 1rem;
-  margin-top: 1rem;
 }
 
-.word-input {
-  flex: 1;
-  padding: 1rem 1.5rem;
-  font-size: 1.5rem;
-  font-weight: bold;
+.mission__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.mission__list li {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.mission__letters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.mission__letter {
+  flex: 0 0 clamp(56px, 20vw, 72px);
+  width: clamp(56px, 20vw, 72px);
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(17, 23, 42, 0.9);
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.mission__letter.is-active {
+  border-color: rgba(124, 92, 255, 0.4);
+  background: rgba(124, 92, 255, 0.12);
+  transform: translateY(-4px);
+}
+
+.mission__letter-input {
+  width: 100%;
+  height: 100%;
   text-align: center;
-  border: 3px solid rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  font-size: 2rem;
+  font-weight: 700;
+  background: transparent;
+  border: none;
+  color: #fff;
   text-transform: uppercase;
-  background-color: rgba(26, 26, 26, 0.6);
-  color: #ecf0f1;
 }
 
-.word-input:focus {
+.mission__letter-input:focus {
   outline: none;
-  border-color: #ffffff;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
 }
 
-.word-input.shake {
+.mission__word-group {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.mission__word-input {
+  flex: 1;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-align: center;
+}
+
+.mission__word-input.is-shaking {
   animation: shake 0.5s ease;
 }
 
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-  20%, 40%, 60%, 80% { transform: translateX(5px); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
 }
 
-/* Redesigned check button */
-.check-button {
-  padding: 0.8rem 1.5rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: white;
-  background: linear-gradient(135deg, #9b59b6, #8e44ad);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 10px rgba(155, 89, 182, 0.4);
-  position: relative;
-  overflow: hidden;
-}
-
-.button-text {
-  margin-right: 0.5rem;
-}
-
-.button-icon {
-  font-size: 1.2rem;
-  transition: transform 0.3s ease;
-}
-
-.check-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 15px rgba(155, 89, 182, 0.6);
-  background: linear-gradient(135deg, #8e44ad, #6c3483);
-}
-
-.check-button:hover .button-icon {
-  transform: translateX(3px);
-}
-
-.check-button:active {
-  transform: translateY(0);
-}
-
-.result-modal {
+.mission__modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-  backdrop-filter: blur(5px);
-  animation: fadeIn 0.3s ease;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(3, 6, 18, 0.6);
+  backdrop-filter: blur(6px);
+  z-index: 1050;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.result-container {
-  background-color: rgba(70, 70, 70, 0.9);
-  border-radius: 12px;
-  padding: 2rem;
+.mission__modal-card {
+  max-width: 420px;
   text-align: center;
-  max-width: 400px;
-  width: 90%;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  position: relative;
-  animation: scaleIn 0.3s ease;
+  display: grid;
+  gap: 1rem;
+  padding: 2rem 1.75rem;
 }
 
-@keyframes scaleIn {
-  from { transform: scale(0.9); }
-  to { transform: scale(1); }
+.mission__modal-card h3 {
+  margin: 0;
 }
 
-.result-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-  position: relative;
+.mission__modal-card p {
+  margin: 0;
+  color: var(--text-secondary);
 }
 
-.correct .result-icon {
-  color: #ffffff;
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+.mission__modal-card.is-success {
+  border: 1px solid rgba(74, 227, 140, 0.35);
 }
 
-.incorrect .result-icon {
-  color: #e74c3c;
-  text-shadow: 0 0 15px rgba(231, 76, 60, 0.8);
+.mission__modal-card.is-error {
+  border: 1px solid rgba(255, 107, 107, 0.35);
 }
 
-.firework {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  animation: firework 2s ease infinite;
-  z-index: -1;
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+  transition: all 0.3s ease;
 }
 
-.firework:nth-child(1) {
-  background-color: #ff3333;
-  animation-delay: 0s;
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+  opacity: 0;
+  transform: translateY(12px) scale(0.96);
 }
 
-.firework:nth-child(2) {
-  background-color: #33ff33;
-  animation-delay: 0.2s;
-}
-
-.firework:nth-child(3) {
-  background-color: #3333ff;
-  animation-delay: 0.4s;
-}
-
-.firework:nth-child(4) {
-  background-color: #ffff33;
-  animation-delay: 0.6s;
-}
-
-.firework:nth-child(5) {
-  background-color: #ff33ff;
-  animation-delay: 0.8s;
-}
-
-@keyframes firework {
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(15);
-    opacity: 0;
-  }
-}
-
-.result-message {
-  font-size: 1.2rem;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-}
-
-.correct .result-message {
-  color: #ffffff;
-}
-
-.incorrect .result-message {
-  color: #e74c3c;
-}
-
-.close-result {
-  padding: 0.75rem 1.5rem;
-  background-color: rgba(26, 26, 26, 0.6);
-  color: #ecf0f1;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.close-result:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
-}
-
-@media (max-width: 768px) {
-  .game-container {
-    padding: 1rem;
-  }
-  
-  .title {
-    font-size: 2rem;
-  }
-  
-  .letter-box {
-    width: 65px;
-    height: 65px;
-  }
-  
-  .letter-input {
-    width: 50px;
-    height: 50px;
-    font-size: 1.7rem;
-  }
-  
-  .word-submission-header {
+@media (max-width: 640px) {
+  .mission__code-group {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 0.75rem;
   }
-  
-  .progress-status {
-    margin-left: 0;
-    margin-top: 1rem;
-    align-items: flex-start;
+
+  .mission__code-group .btn {
+    width: 100%;
   }
-  
-  .word-input-container {
+
+  .mission__code-group input {
+    width: 100%;
+  }
+
+  .mission__step-controls {
     flex-direction: column;
+    gap: 0.75rem;
   }
-  
-  .word-input {
+
+  .mission__step-controls .btn {
     width: 100%;
-    padding: 0.8rem;
-    font-size: 1.3rem;
   }
-  
-  .check-button {
+}
+
+@media (max-width: 640px) {
+  .mission__word-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .mission__word-group .btn {
     width: 100%;
-    padding: 0.8rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .mission__hero {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+
+  .mission__letters {
+    justify-content: center;
+  }
+
+  .mission__panel {
+    padding: 2rem 1.75rem;
   }
 }
 </style>

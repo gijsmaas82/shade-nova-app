@@ -1,60 +1,55 @@
 <template>
-  <div class="container">
-    <!-- Stap 0: Intro -->
-    <transition name="fade-slide">
-      <div v-if="step === 0">
-        <h1 class="title">Waar bevindt het spel zich?</h1>
-        <p class="subtitle">Het spel kan gespeeld worden op het digibord in lokaal 2.10. Hier begint je avontuur!</p>
-        <button class="glow-button" @click="nextStep">Verder</button>
+  <div class="mission mission--fromage">
+    <section class="mission__hero card surface-frosted">
+      <div class="mission__hero-copy">
+        <span class="badge">Missie 2</span>
+        <h1>Agent Fromage</h1>
+        <p>Verplaats je naar lokaal 2.10 en infiltreer het systeem. Vind de geheime code op het digibord om de firewall te kraken.</p>
       </div>
-    </transition>
+      <div class="mission__hero-visual shadow-ring">
+        <img :src="heroImage" alt="Agent Fromage" />
+      </div>
+    </section>
 
-    <!-- Stap 1: Instructies -->
-    <transition name="fade-slide">
-      <div v-if="step === 1" class="instructions">
-        <h1 class="title">Volg deze stappen om te hacken:</h1>
-        <ul class="step-list">
-          <li><strong>Stap 1:</strong> Betreed een futuristische wereld en hack een beveiligde computer.</li>
-          <li><strong>Stap 2:</strong> Zoek in de omgeving naar de geheime code.</li>
-          <li><strong>Stap 3:</strong> Speel een 2D-minigame om de firewall te omzeilen.</li>
-          <li><strong>Stap 4:</strong> Druk op de rode knop om de hack te voltooien.</li>
-          <li><strong>Stap 5:</strong> Gebruik de code om de missie af te ronden.</li>
-        </ul>
-        <button class="glow-button" @click="nextStep">Ik ben klaar</button>
-      </div>
-    </transition>
+    <section class="mission__panel card" v-if="step === 0">
+      <h2 class="section-heading">Waar moet je zijn?</h2>
+      <p class="section-subtext">Het spel staat klaar op het digibord in lokaal 2.10. Zet je headset op, log in als agent en volg de instructies.</p>
+      <button class="btn" @click="nextStep">Start briefing</button>
+    </section>
 
-    <!-- Stap 2: Code invoeren -->
-    <transition name="fade-slide">
-      <div v-if="step === 2">
-        <h1 class="title">Voer de code in van de computer</h1>
-        <div class="code-bar">
-          <input 
-            v-model="code" 
-            type="text" 
-            placeholder="Voer de code in..." 
-            @input="validateCode" 
-            maxlength="4"
-            @keydown.enter="submitCode"
-          />
-        </div>
-        <button class="glow-button" @click="submitCode">Verzenden</button>
-        <p v-if="message" class="message">{{ message }}</p>
-        <!-- <div class="game-images">
-          <img :src="gameimages[0]" class="gameimage" />
-          <img :src="gameimages[1]" class="gameimage" />
-          <img :src="gameimages[2]" class="gameimage" />
-        </div> -->
-      </div>
-    </transition>
+    <section class="mission__panel card" v-else-if="step === 1">
+      <h2 class="section-heading">Zo voltooi je de hack</h2>
+      <ul class="mission__list">
+        <li><strong>1.</strong> Activeer de terminal en observeer de omgeving.</li>
+        <li><strong>2.</strong> Zoek naar een verborgen code in de digitale wereld.</li>
+        <li><strong>3.</strong> Speel de minigame en ontwijk de beveiliging.</li>
+        <li><strong>4.</strong> Gebruik de gevonden code om de missie af te ronden.</li>
+      </ul>
+      <button class="btn" @click="nextStep">Ik ben klaar</button>
+    </section>
 
-    <!-- Stap 3: Succesvol afgerond -->
-    <transition name="fade-slide">
-      <div v-if="step === 3">
-        <p class="final-message"><strong>Gefeliciteerd agent Fromage! Je missie is geslaagd!</strong></p>
-        <button class="glow-button" @click="goToSnowOwl">Ga verder</button>
+    <section class="mission__panel card" v-else-if="step === 2">
+      <h2 class="section-heading">Voer de gevonden code in</h2>
+      <p class="section-subtext">Typ de viercijferige code van de computer in om jouw hack te voltooien.</p>
+      <div class="mission__code-group">
+        <input
+          v-model="code"
+          type="text"
+          placeholder="Voer de code in"
+          maxlength="4"
+          @input="validateCode"
+          @keydown.enter="submitCode"
+        />
+        <button class="btn" @click="submitCode">Verzenden</button>
       </div>
-    </transition>
+      <p v-if="message" class="mission__feedback" :class="{ 'is-error': messageIsError }">{{ message }}</p>
+    </section>
+
+    <section class="mission__panel card" v-else-if="step === 3">
+      <h2 class="section-heading">Missie geslaagd</h2>
+      <p class="section-subtext">De firewall is opengezet en je bent door naar de volgende opdracht. Ga terug naar de hub om door te gaan.</p>
+      <button class="btn" @click="goToSnowOwl">Terug naar Snow Owl</button>
+    </section>
   </div>
 </template>
 
@@ -71,138 +66,174 @@ export default {
       step: 0,
       code: "",
       message: "",
-      gameStore: useGameStore(), // 🔹 Pinia store
-      router: useRouter(), // 🔹 Vue Router
-      gameimages: [new URL('@/assets/game2/agentfromage1.png', import.meta.url).href, new URL('@/assets/game2/agentfromage2.png', import.meta.url).href, new URL('@/assets/game2/agentfromage3.png', import.meta.url).href]
+      messageIsError: false,
+      gameStore: useGameStore(),
+      router: useRouter(),
+      heroImage: new URL('@/assets/game2/agentfromage1.png', import.meta.url).href
     };
+  },
+  async beforeRouteLeave(_to, _from, next) {
+    if (!this.gameStore.gameProgress.game2completed) {
+      try {
+        const gameRef = doc(db, "games", "game2");
+        await updateDoc(gameRef, { available: true, lockedBy: null, lockedAt: null });
+      } catch (error) {
+        console.error("Fout bij het vrijgeven van game2:", error);
+      }
+    }
+    next();
   },
   methods: {
     nextStep() {
       this.step++;
     },
     validateCode() {
-      this.code = this.code.replace(/[^0-9]/g, ""); // Alleen cijfers
+      this.code = this.code.replace(/[^0-9]/g, "");
     },
     async submitCode() {
-    if (this.code.trim() === "8630") {
-      this.message = "✅ Code correct! Gefeliciteerd agent Fromage! Je missie is geslaagd!";
+      if (this.code.trim() === "8630") {
+        this.message = "Code correct! De hack is voltooid.";
+        this.messageIsError = false;
 
-      // 🔹 Roep de completeGame functie aan om de voortgang bij te werken
-      this.gameStore.completeGame("game2completed");
+        this.gameStore.completeGame("game2completed");
 
-      // 🔹 Zoek Firestore document op basis van playerName
-      try {
-        const gameInstanceRef = collection(db, "gameinstances");
-        const q = query(gameInstanceRef, where("name", "==", this.gameStore.playerName));
-        const querySnapshot = await getDocs(q);
+        try {
+          const gameInstanceRef = collection(db, "gameinstances");
+          const q = query(gameInstanceRef, where("name", "==", this.gameStore.playerName));
+          const querySnapshot = await getDocs(q);
 
-        if (!querySnapshot.empty) {
-          // Haal het eerste document op (aangezien je verwacht dat er maar één match is)
-          const playerDoc = querySnapshot.docs[0];
-          await updateDoc(playerDoc.ref, { game2completed: true });
-          console.log("Game 2 voortgang opgeslagen in Firestore! ✅");
+          if (!querySnapshot.empty) {
+            const playerDoc = querySnapshot.docs[0];
+            await updateDoc(playerDoc.ref, { game2completed: true });
 
-          // 🔹 Zet het spel weer op 'beschikbaar' in de games-collectie
-          const gameRef = doc(db, "games", "game2");
-          await updateDoc(gameRef, { available: true });
-          console.log("Game 2 opnieuw beschikbaar gemaakt in Firestore! 🔓");
-        } else {
-          console.error("Speler niet gevonden in Firestore!");
+            const gameRef = doc(db, "games", "game2");
+            await updateDoc(gameRef, { available: true, lockedBy: null, lockedAt: null });
+          }
+        } catch (error) {
+          console.error("Fout bij updaten van Firestore:", error);
         }
-      } catch (error) {
-        console.error("Fout bij updaten van Firestore:", error);
-      }
 
-      setTimeout(() => {
-        this.router.push("/snowowl"); // 🔹 Stuur speler naar /snowowl
-      }, 2000);
-    } else {
-      this.message = "❌ Foute code, probeer opnieuw.";
+        this.step = 3;
+        setTimeout(() => {
+          this.router.push("/snowowl");
+        }, 2000);
+      } else {
+        this.message = "Foute code, probeer het opnieuw.";
+        this.messageIsError = true;
+      }
+    },
+    goToSnowOwl() {
+      this.router.push("/snowowl");
     }
-  }
   }
 };
 </script>
 
 <style scoped>
-.container {
-  margin-top: 5vh;
+.mission {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  gap: var(--gap-lg);
+  padding: 0 1.25rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.mission__hero {
+  display: grid;
+  gap: var(--gap-md);
+  padding: 2rem 1.75rem;
   align-items: center;
-  min-height: 100vh;
-  text-align: center;
-  padding: 50px;
-  background: linear-gradient(to bottom, #111, #222);
-  color: #fff;
-  font-family: 'SF Pro Display', sans-serif;
-  transition: background 1s ease-in-out;
 }
 
-.title {
-  font-size: 2rem;
-  font-weight: bold;
-  text-transform: uppercase;
+.mission__hero-copy h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 2.4rem);
+  margin: 0.25rem 0 0.75rem;
 }
 
-.subtitle {
-  font-size: 1.2rem;
-  margin-bottom: 20px;
+.mission__hero-copy p {
+  margin: 0;
+  color: var(--text-secondary);
 }
 
-.gameimages {
+.mission__hero-visual {
+  display: grid;
+  place-items: center;
+}
+
+.mission__hero-visual img {
+  width: min(260px, 70vw);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mission__panel {
+  display: grid;
+  gap: 1rem;
+  text-align: left;
+}
+
+.mission__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.mission__list li {
+  font-size: 0.95rem;
+}
+
+.mission__code-group {
   display: flex;
-  flex-direction: column;
-}
-.gameimage {
-  max-width: 80%;
-  border:#000000;
-  border-radius: 10px;
-  margin: 10px;
+  gap: 0.75rem;
 }
 
-.glow-button {
-  padding: 15px 30px;
-  font-size: 18px;
-  font-weight: bold;
-  border: none;
-  border-radius: 50px;
-  color: #fff;
-  background: linear-gradient(45deg, #007aff, #0fa5ff);
-  box-shadow: 0 0 15px rgba(15, 165, 255, 0.8);
-  cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
+.mission__feedback {
+  margin: 0;
+  color: var(--success-color);
+  font-weight: 600;
 }
 
-.glow-button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 30px rgba(15, 165, 255, 1);
+.mission__feedback.is-error {
+  color: var(--danger-color);
 }
 
-.code-bar input {
-  width: 250px;
-  padding: 15px;
-  font-size: 20px;
-  text-align: center;
-  border-radius: 12px;
-  border: 2px solid #007aff;
-  background: #111;
-  color: #fff;
+@media (max-width: 640px) {
+  .mission__code-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .mission__code-group .btn {
+    width: 100%;
+  }
+
+  .mission__code-group input {
+    width: 100%;
+  }
+
+  .mission__step-controls {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .mission__step-controls .btn {
+    width: 100%;
+  }
 }
 
-.message {
-  margin-top: 10px;
-  font-size: 1.2rem;
-  font-weight: bold;
-}
+@media (min-width: 768px) {
+  .mission__hero {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
 
-.fade-slide-enter-active, .fade-slide-leave-active {
-  transition: all 0.6s ease;
-}
-
-.fade-slide-enter, .fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(20px);
+  .mission__panel {
+    padding: 2rem 1.75rem;
+  }
 }
 </style>
