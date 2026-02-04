@@ -9,28 +9,7 @@
         </p>
       <h2 class="section-heading">Wat staat je te wachten?</h2>
       <p class="section-subtext">Elke missie prikkelt een andere vaardigheid. Kies slim, werk samen en blijf scherp.</p>
-      <div class="home__highlight-grid">
-        <article v-for="item in highlights" :key="item.title" class="home__highlight card">
-          <div class="home__highlight-icon">{{ item.icon }}</div>
-          <h3>{{ item.title }}</h3>
-          <p>{{ item.description }}</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="home__timeline card">
-      <h2 class="section-heading">Zo word je een S.H.A.D.E agent</h2>
-      <ol class="home__timeline-list">
-        <li v-for="(step, index) in steps" :key="index" class="home__timeline-step">
-          <div class="home__step-index">{{ index + 1 }}</div>
-          <div>
-            <h3>{{ step.title }}</h3>
-            <p>{{ step.description }}</p>
-          </div>
-        </li>
-      </ol>
-    </section>
-    <section class="home__hero card surface-frosted">
+      <section class="home__hero card surface-frosted">
       <div class="home__hero-copy">
         <div class="home__actions">
           <button class="btn" @click="startGame">
@@ -55,6 +34,27 @@
         <img :src="heroImage" alt="Sneeuwuil" />
         <div class="home__glow"></div>
       </div>
+    </section>
+      <div class="home__highlight-grid">
+        <article v-for="item in highlights" :key="item.title" class="home__highlight card">
+          <div class="home__highlight-icon">{{ item.icon }}</div>
+          <h3>{{ item.title }}</h3>
+          <p>{{ item.description }}</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="home__timeline card">
+      <h2 class="section-heading">Zo word je een S.H.A.D.E agent</h2>
+      <ol class="home__timeline-list">
+        <li v-for="(step, index) in steps" :key="index" class="home__timeline-step">
+          <div class="home__step-index">{{ index + 1 }}</div>
+          <div>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.description }}</p>
+          </div>
+        </li>
+      </ol>
     </section>
   </div>
 </template>

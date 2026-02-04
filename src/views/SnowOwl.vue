@@ -107,7 +107,7 @@
 
       <section class="snowowl__tiles">
         <h2 class="section-heading">Kies je volgende missie</h2>
-        <p class="section-subtext">Ga naar de locatie op het leerplein, speel het spel en keer terug om de code in te vullen.</p>
+        <p class="section-subtext">Klik op het plaatje van een missie. Volg de instructies. Ga naar de locatie op het leerplein, speel het spel en vul de code in.</p>
         <div class="snowowl__tile-grid">
           <article
             v-for="(tile, index) in tiles"
@@ -172,19 +172,19 @@ export default {
     const progressReady = ref(false);
 
     const popups = ref([
-      { title: "Welkom!", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Je staat op het punt om de ultieme test van S.H.A.D.E. te ervaren." },
-      { title: "Wat is S.H.A.D.E?", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "S.H.A.D.E. beschermt onze digitale samenleving. Alleen de scherpste agenten krijgen toegang." },
-      { title: "De nacht van de sneeuwuil", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Voltooi vijf missies verspreid over het leerplein en verzamel alle cijfers van de kluis." },
-      { title: "Hoe werkt het?", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Ga naar de locatie van elke missie, speel het spel, keer terug en voer de code in." },
+      { title: "Welkom!", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Je staat op het punt om de ultieme test van S.H.A.D.E. te ervaren. S.H.A.D.E. beschermt onze digitale samenleving. Alleen de scherpste agenten krijgen toegang." },
+      // { title: "Wat is S.H.A.D.E?", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "S.H.A.D.E. beschermt onze digitale samenleving. Alleen de scherpste agenten krijgen toegang." },
+      { title: "De nacht van de sneeuwuil", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Voltooi vijf missies verspreid over het leerplein en verzamel alle cijfers van de kluis. Ga naar de locatie van elke missie, speel het spel en voer de code in." },
+      // { title: "Hoe werkt het?", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Ga naar de locatie van elke missie, speel het spel, keer terug en voer de code in." },
       { title: "Jouw codenaam", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, text: "Vul je naam in en start de missie van de sneeuwuil!", input: true }
     ]);
 
     const tiles = ref([
-      { id: 1, name: "Spel 1", progressKey: "game1completed", img: new URL('@/assets/dimensions-collapsing.png', import.meta.url).href, title: "Dimensions collapsing", skill: "Ruimtelijk inzicht", available: true, state: "available" },
-      { id: 2, name: "Spel 2", progressKey: "game2completed", img: new URL('@/assets/game2/mario.png', import.meta.url).href, title: "Mario", skill: "Vingervlugheid", available: true, state: "available" },
+      { id: 1, name: "Spel 1", progressKey: "game1completed", img: new URL('@/assets/sneeuwuil.png', import.meta.url).href, title: "Smart Quiz", skill: "Intelligentie", available: true, state: "available" },
+      { id: 2, name: "Spel 2", progressKey: "game2completed", img: new URL('@/assets/game2/boss.png', import.meta.url).href, title: "Space Invaders", skill: "Vingervlugheid", available: true, state: "available" },
       { id: 3, name: "Spel 3", progressKey: "game3completed", img: new URL('@/assets/laser-lockdown.png', import.meta.url).href, title: "Laser Lockdown", skill: "Precisie", available: true, state: "available" },
       { id: 4, name: "Spel 4", progressKey: "game4completed", img: new URL('@/assets/game4/flappy.png', import.meta.url).href, title: "Flappy Wifi", skill: "Presteren onder druk", available: true, state: "available" },
-      { id: 5, name: "Spel 5", progressKey: "game5completed", img: new URL('@/assets/game5/cyberclues.png', import.meta.url).href, title: "Cyber Clues", skill: "Puzzelen", available: true, state: "available" }
+      { id: 5, name: "Spel 5", progressKey: "game5completed", img: new URL('@/assets/dimensions-collapsing.png', import.meta.url).href, title: "Dimensions Collapsing", skill: "Ruimtelijk inzicht", available: true, state: "available" }
     ]);
 
     const STALE_LOCK_MS = 7 * 60 * 1000;
