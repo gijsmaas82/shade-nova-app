@@ -17,7 +17,7 @@
     <section class="mission__panel card">
       <h2 class="section-heading">Zo pak je het aan</h2>
       <ul class="mission__list">
-        <li><strong>Stap 1:</strong> Start het spel op het digibord in lokaal 2.06.</li>
+        <li><strong>Stap 1:</strong> Start het spel op het digibord in lokaal 2.09.</li>
         <li><strong>Stap 2:</strong> Vergelijk wat je ziet met de echte omgeving op het leerplein.</li>
         <li><strong>Stap 3:</strong> Vind de vijf letters die verborgen zitten in de echte wereld.</li>
         <li><strong>Stap 4:</strong> Noteer de letters in deze missieconsole.</li>
@@ -103,12 +103,12 @@ export default {
     }
   },
   async beforeRouteLeave(_to, _from, next) {
-    if (!this.gameStore.gameProgress.game1completed) {
+    if (!this.gameStore.gameProgress.game5completed) {
       try {
-        const gameRef = doc(db, "games", "game1");
+        const gameRef = doc(db, "games", "game5");
         await updateDoc(gameRef, { available: true, lockedBy: null, lockedAt: null });
       } catch (error) {
-        console.error("Fout bij het vrijgeven van game1:", error);
+        console.error("Fout bij het vrijgeven van game5:", error);
       }
     }
     next();
@@ -133,7 +133,7 @@ export default {
         this.message = "Gefeliciteerd! Je hebt het geheime woord ontdekt en kunt nu verder gaan!";
         this.isCorrect = true;
         this.triggerConfetti();
-        this.gameStore.gameProgress.game1completed = true;
+        this.gameStore.gameProgress.game5completed = true;
         this.gameStore.saveProgress();
 
         try {
@@ -143,9 +143,9 @@ export default {
 
           if (!querySnapshot.empty) {
             const playerDoc = querySnapshot.docs[0];
-            await updateDoc(playerDoc.ref, { game1completed: true });
+            await updateDoc(playerDoc.ref, { game5completed: true });
 
-            const gameRef = doc(db, "games", "game1");
+            const gameRef = doc(db, "games", "game5");
             await updateDoc(gameRef, { available: true, lockedBy: null, lockedAt: null });
           }
         } catch (error) {

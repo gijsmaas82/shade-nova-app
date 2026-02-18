@@ -4,7 +4,7 @@
     <section class="mission__hero card surface-frosted">
       <div class="mission__hero-copy">
         <span class="badge">Missie 4</span>
-        <h1>Mario</h1>
+        <h1>Smart Quiz</h1>
         <p>Beantwoord alle vragen correct om de geheime code te verdienen!</p>
       </div>
       <div class="mission__hero-visual shadow-ring">
@@ -165,7 +165,7 @@ export default {
 
           if (!querySnapshot.empty) {
             const playerDoc = querySnapshot.docs[0];
-            await updateDoc(playerDoc.ref, { game2completed: true });
+            await updateDoc(playerDoc.ref, { game1completed: true });
 
             const gameRef = doc(db, "games", "game1");
             await updateDoc(gameRef, {
