@@ -1,6 +1,6 @@
 <template>
   <header ref="navbarRef" class="navbar" :class="{ 'navbar--active': gameStore.playerName }">
-    <div class="navbar__brand">
+    <div class="navbar__brand" @click="goHome">
       <div class="navbar__logo shadow-ring">
         <img :src="logo" alt="S.H.A.D.E logo" />
       </div>
@@ -32,6 +32,7 @@
 <script>
 import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
 import { useGameStore } from "../stores/gameStore";
+import { useRouter } from 'vue-router'
 import logo from "@/assets/logo.png";
 
 export default {
@@ -39,6 +40,11 @@ export default {
     const gameStore = useGameStore();
     const navbarRef = ref(null);
     let resizeObserver = null;
+    const router = useRouter()
+
+    const goHome = () => {
+      router.push('/')
+    }
 
     const completedGames = computed(() => {
       const progress = gameStore.gameProgress || {};
@@ -87,7 +93,7 @@ export default {
       }
     });
 
-    return { gameStore, completedGames, progressPercent, playerInitial, logo, navbarRef };
+    return { gameStore, completedGames, progressPercent, playerInitial, logo, navbarRef, goHome };
   },
 };
 </script>

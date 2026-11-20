@@ -184,7 +184,7 @@ export default {
       { id: 2, name: "Spel 2", progressKey: "game2completed", img: new URL('@/assets/game2/boss.png', import.meta.url).href, title: "Space Invaders", skill: "Vingervlugheid", available: true, state: "available" },
       { id: 3, name: "Spel 3", progressKey: "game3completed", img: new URL('@/assets/laser-lockdown.png', import.meta.url).href, title: "Laser Lockdown", skill: "Precisie", available: true, state: "available" },
       { id: 4, name: "Spel 4", progressKey: "game4completed", img: new URL('@/assets/game4/flappy.png', import.meta.url).href, title: "Flappy Wifi", skill: "Presteren onder druk", available: true, state: "available" },
-      { id: 5, name: "Spel 5", progressKey: "game5completed", img: new URL('@/assets/dimensions-collapsing.png', import.meta.url).href, title: "Dimensions Collapsing", skill: "Ruimtelijk inzicht", available: true, state: "available" }
+      { id: 5, name: "Spel 5", progressKey: "game5completed", img: new URL('@/assets/game5/deltarune.png', import.meta.url).href, title: "Deltarune Decompiled", skill: "Strategisch denken", available: true, state: "available" }
     ]);
 
     const STALE_LOCK_MS = 7 * 60 * 1000;

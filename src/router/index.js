@@ -3,7 +3,7 @@ import HomePage from '../views/HomePage.vue';
 import SnowOwl from '../views/SnowOwl.vue';
 // import EscapeRoom from '@/views/EscapeRoom.vue';
 // import FeelIT from '@/views/FeelIT.vue';
-import ArgTeam1 from '@/views/ArgTeam1.vue';
+// import ArgTeam1 from '@/views/ArgTeam1.vue';
 // import AgentFromage from '@/views/AgentFromage.vue';
 import LaserLockdown from '@/views/LaserLockdown.vue';
 import QrCode from '@/views/QrCode.vue';
@@ -12,6 +12,7 @@ import FlappyWifi from '@/views/FlappyWifi.vue';
 // import CyberClues from '@/views/CyberClues.vue';
 import MultiChoice from '@/views/MultiChoice.vue';
 import SpaceInvaders from '@/views/SpaceInvaders.vue';
+import DeltaRune from '@/views/DeltaRune.vue';
 
 const routes = [
   { path: '/', component: HomePage },
@@ -20,7 +21,7 @@ const routes = [
   { path: '/game2', component: SpaceInvaders },
   { path: '/game3', component: LaserLockdown },
   { path: '/game4', component: FlappyWifi },
-  { path: '/game5', component: ArgTeam1 },
+  { path: '/game5', component: DeltaRune },
   { path: '/qrcode', component: QrCode }
   
 ];
